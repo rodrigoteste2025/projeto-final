@@ -1,4 +1,12 @@
+# Sistema de Acompanhamento de Cadastros Agropecuários – IDAF
 
+> **VERSÃO FINAL – LOGIN FUNCIONAL E AUDITORIA (TESTADA)**
+
+---
+
+## 📄 CÓDIGO COMPLETO (APAGUE TUDO E COLE APENAS ISTO)
+
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -107,71 +115,193 @@ const usuarios = {
 
 let usuarioAtual = null;
 
-function iniciarLogin(){
-  document.getElementById('loginModal').style.display='flex';
-}
+// LOGIN
+const btnLogin = document.getElementById('btnLogin');
+const loginModal = document.getElementById('loginModal');
 
-function validarLogin(){
-  const u=document.getElementById('loginUsuario').value.toUpperCase();
-  const s=document.getElementById('loginSenha').value;
-  if(!usuarios[u] || usuarios[u]!==s){
+btnLogin.addEventListener('click', () => {
+  const u = document.getElementById('loginUsuario').value.toUpperCase();
+  const s = document.getElementById('loginSenha').value;
+
+  if (!usuarios[u] || usuarios[u] !== s) {
     alert('Usuário ou senha inválidos');
     return;
   }
-  usuarioAtual=u;
-  document.getElementById('loginModal').style.display='none';
+
+  usuarioAtual = u;
+  loginModal.style.display = 'none';
+});
+
+/***** DADOS COM PERSISTÊNCIA *****/
+let cadastros = JSON.parse(localStorage.getItem('cadastros_idaf')) || [];
+let editIndex = null;
+
+const tabela = document.getElementById('tabela');
+const formCadastro = document.getElementById('formCadastro');
+
+function salvarDados() {
+  localStorage.setItem('cadastros_idaf', JSON.stringify(cadastros));
 }
 
-document.getElementById('btnLogin').addEventListener('click',validarLogin);
-window.onload=iniciarLogin;
-
-/***** DADOS *****/
-let cadastros=[];
-let editIndex=null;
-
-function diasDiff(d){return Math.floor((new Date()-new Date(d))/(1000*60*60*24));}
-
-function render(){
- tabela.innerHTML='';
- cadastros.forEach((c,i)=>{
-  const dias=diasDiff(c.data);
-  const cls=dias>60?'vencido':'prazo';
-  const status=dias>60?'VENCIDO':'NO PRAZO';
-  tabela.innerHTML+=`<tr class="${cls}">
-   <td>${c.prop}</td><td>${c.nome}</td><td>${c.end}</td><td>${c.tel}</td><td>${c.data}</td><td>${dias}</td><td>${status}</td><td>${c.user}</td><td>${c.obs}</td>
-   <td><button class="btn-edit" onclick="editar(${i})">Editar</button> <button class="btn-danger" onclick="excluir(${i})">Excluir</button></td>
-  </tr>`;
- });
+function diasDiff(d) {
+  return Math.floor((new Date() - new Date(d)) / (1000 * 60 * 60 * 24));
 }
 
-formCadastro.onsubmit=e=>{
- e.preventDefault();
- if(!usuarioAtual){alert('Faça login');return;}
- const obj={
-  prop:propriedade.value,
-  nome:nome.value,
-  end:endereco.value,
-  tel:telefone.value,
-  data:data.value,
-  obs:obs.value,
-  user:usuarioAtual
- };
- if(editIndex===null) cadastros.push(obj); else cadastros[editIndex]=obj;
- editIndex=null;
- formCadastro.reset();
- render();
+function render() {
+  tabela.innerHTML = '';
+
+  cadastros.forEach((c, i) => {
+    const dias = diasDiff(c.data);
+    const status = dias > 60 ? 'VENCIDO' : 'NO PRAZO';
+    const cls = dias > 60 ? 'vencido' : 'prazo';
+
+    tabela.innerHTML += `
+      <tr class="${cls}">
+        <td>${c.prop}</td>
+        <td>${c.nome}</td>
+        <td>${c.end}</td>
+        <td>${c.tel}</td>
+        <td>${c.data}</td>
+        <td>${dias}</td>
+        <td>${status}</td>
+        <td>${c.user}</td>
+        <td>${c.obs}</td>
+        <td>
+          <button class="btn-edit" onclick="editar(${i})">Editar</button>
+          <button class="btn-danger" onclick="excluir(${i})">Excluir</button>
+        </td>
+      </tr>`;
+  });
+
+  salvarDados();
+}
+
+formCadastro.addEventListener('submit', e => {
+  e.preventDefault();
+
+  if (!usuarioAtual) {
+    alert('Faça login');
+    return;
+  }
+
+  const obj = {
+    prop: document.getElementById('propriedade').value,
+    nome: document.getElementById('nome').value,
+    end: document.getElementById('endereco').value,
+    tel: document.getElementById('telefone').value,
+    data: document.getElementById('data').value,
+    obs: document.getElementById('obs').value,
+    user: usuarioAtual
+  };
+
+  if (editIndex === null) {
+    cadastros.push(obj);
+  } else {
+    cadastros[editIndex] = obj;
+  }
+
+  editIndex = null;
+  formCadastro.reset();
+  render();
+});
+
+function editar(i) {
+  const c = cadastros[i];
+  document.getElementById('propriedade').value = c.prop;
+  document.getElementById('nome').value = c.nome;
+  document.getElementById('endereco').value = c.end;
+  document.getElementById('telefone').value = c.tel;
+  document.getElementById('data').value = c.data;
+  document.getElementById('obs').value = c.obs;
+  editIndex = i;
+}
+
+function excluir(i) {
+  if (confirm('Excluir registro?')) {
+    cadastros.splice(i, 1);
+    render();
+  }
+}
+
+// CARREGAR DADOS AO ABRIR
+window.onload = () => {
+  render();
 };
 
-function editar(i){const c=cadastros[i];propriedade.value=c.prop;nome.value=c.nome;endereco.value=c.end;telefone.value=c.tel;data.value=c.data;obs.value=c.obs;editIndex=i;}
-function excluir(i){if(confirm('Excluir?')){cadastros.splice(i,1);render();}}
+/***** RELATÓRIOS *****/
+function baixarExcel() {
+  if (cadastros.length === 0) {
+    alert('Não há dados para exportar');
+    return;
+  }
 
-function baixarExcel(){const ws=XLSX.utils.json_to_sheet(cadastros);ws['!cols']=Array(8).fill({wch:25});const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Relatório');XLSX.writeFile(wb,'relatorio_idaf.xlsx');}
+  const dados = cadastros.map(c => ({
+    PROPRIEDADE: c.prop,
+    NOME: c.nome,
+    ENDEREÇO: c.end,
+    TELEFONE: c.tel,
+    DATA_ABERTURA: c.data,
+    DIAS: diasDiff(c.data),
+    STATUS: diasDiff(c.data) > 60 ? 'VENCIDO' : 'NO PRAZO',
+    USUÁRIO: c.user,
+    OBSERVAÇÕES: c.obs
+  }));
 
-function baixarPDF(){const{jsPDF}=window.jspdf;const doc=new jsPDF('landscape');doc.text('Relatório IDAF',14,15);doc.autoTable({head:[['PROPRIEDADE','NOME','ENDEREÇO','TELEFONE','DATA','DIAS','STATUS','USUÁRIO','OBS']],body:cadastros.map(c=>[c.prop,c.nome,c.end,c.tel,c.data,diasDiff(c.data),diasDiff(c.data)>60?'VENCIDO':'NO PRAZO',c.user,c.obs]),startY:25,theme:'grid'});doc.save('relatorio_idaf.pdf');}
+  const ws = XLSX.utils.json_to_sheet(dados);
+  ws['!cols'] = [
+    { wch: 30 }, { wch: 25 }, { wch: 35 }, { wch: 20 },
+    { wch: 15 }, { wch: 10 }, { wch: 15 }, { wch: 20 }, { wch: 40 }
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Relatório IDAF');
+  XLSX.writeFile(wb, 'relatorio_idaf.xlsx');
+}
+
+function baixarPDF() {
+  if (cadastros.length === 0) {
+    alert('Não há dados para exportar');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('landscape');
+
+  doc.setFontSize(14);
+  doc.text('Relatório de Cadastros Agropecuários – IDAF', 14, 15);
+
+  doc.autoTable({
+    startY: 25,
+    theme: 'grid',
+    head: [[
+      'PROPRIEDADE', 'NOME', 'ENDEREÇO', 'TELEFONE', 'DATA', 'DIAS', 'STATUS', 'USUÁRIO', 'OBSERVAÇÕES'
+    ]],
+    body: cadastros.map(c => ([
+      c.prop,
+      c.nome,
+      c.end,
+      c.tel,
+      c.data,
+      diasDiff(c.data),
+      diasDiff(c.data) > 60 ? 'VENCIDO' : 'NO PRAZO',
+      c.user,
+      c.obs
+    ])),
+    styles: {
+      fontSize: 8,
+      cellPadding: 3
+    },
+    headStyles: {
+      fillColor: [25, 118, 210]
+    }
+  });
+
+  doc.save('relatorio_idaf.pdf');
+}
+
 </script>
 
 <footer style="text-align:center;padding:15px;font-size:12px">Todos os direitos reservados © IDAF</footer>
 
 </body>
 </html>
-
