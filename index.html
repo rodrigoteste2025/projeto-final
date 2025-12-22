@@ -1,299 +1,171 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Cadastros Agropecuários</title>
+<title>Cadastro IDAF</title>
 
-<!-- Bibliotecas -->
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- EXCEL / PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
 <style>
-body{font-family:Arial;background:#f4f6f8;margin:0}
-header{background:#a5f182;color:#fff;padding:15px;text-align:center}
-.container{padding:20px}
-.card{background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.2);margin-bottom:20px}
-label{font-weight:bold;display:block;margin-top:10px}
-input,textarea{width:100%;padding:8px;margin-top:5px}
-button{padding:10px;margin-top:15px;border:none;border-radius:5px;cursor:pointer}
-.btn{background:#8fe00d;color:#fff}
-.btn-danger{background:#d32f2f;color:#fff}
-.btn-edit{background:#f9a825}
-table{width:100%;border-collapse:collapse;background:#fff}
+body{font-family:Arial;background:#f4f6f8;margin:0;padding:20px}
+h2{text-align:center}
+form{background:#fff;padding:15px;border-radius:8px;max-width:900px;margin:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+input,textarea,button{padding:8px}
+button{grid-column:span 3;background:#2e7d32;color:#fff;border:none;border-radius:5px;cursor:pointer}
+table{width:100%;border-collapse:collapse;margin-top:25px;background:#fff}
 th,td{border:1px solid #ccc;padding:8px;text-align:center}
-th{background:#1976d2;color:#fff}
-.vencido{background:#ffcdd2}
-.prazo{background:#c8e6c9}
+th{background:#2e7d32;color:#fff}
+.editar{background:#0277bd;color:#fff;border:none;padding:5px}
+.excluir{background:#c62828;color:#fff;border:none;padding:5px}
+footer{text-align:center;margin-top:20px;font-size:12px}
 
-/* LOGIN MODAL */
-#loginModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999}
-#loginBox{background:#fff;padding:30px;border-radius:8px;width:300px;text-align:center}
+#loginModal{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);
+  display:flex;align-items:center;justify-content:center
+}
+#loginBox{background:#fff;padding:25px;border-radius:8px;width:280px;text-align:center}
 </style>
 </head>
+
 <body>
 
-<header>
-<h2>Sistema de Acompanhamento de Cadastros Agropecuários – IDAF</h2>
-</header>
-
-<!-- LOGIN OBRIGATÓRIO -->
+<!-- LOGIN -->
 <div id="loginModal">
   <div id="loginBox">
-    <h3>Acesso ao Sistema</h3>
-    <input id="loginUsuario" placeholder="USUÁRIO" oninput="this.value=this.value.toUpperCase()">
-    <input id="loginSenha" type="password" placeholder="SENHA">
-    <button class="btn" id="btnLogin">Entrar</button>
+    <h3>Login</h3>
+    <input id="loginUser" placeholder="USUÁRIO" oninput="this.value=this.value.toUpperCase()">
+    <input id="loginPass" type="password" placeholder="SENHA">
+    <button onclick="login()">Entrar</button>
   </div>
 </div>
 
-<div class="container">
+<h2>Cadastro de Explorações Agropecuárias</h2>
 
-<div class="card">
-<h3>Novo Cadastro</h3>
-<form id="formCadastro">
-<label>Nome da Propriedade</label>
-<input id="propriedade" required oninput="this.value=this.value.toUpperCase()">
-
-<label>Nome Completo</label>
-<input id="nome" required oninput="this.value=this.value.toUpperCase()">
-
-<label>Apelido</label>
-<input id="apelido" oninput="this.value=this.value.toUpperCase()">
-
-<label>Endereço</label>
-<input id="endereco" required oninput="this.value=this.value.toUpperCase()">
-
-<label>Telefone</label>
-<input id="telefone" required>
-
-<label>Data de Abertura</label>
-<input id="data" type="date" required>
-
-<label>Observações</label>
-<textarea id="obs" oninput="this.value=this.value.toUpperCase()"></textarea>
-
-<button class="btn" type="submit">Salvar</button>
+<form id="form">
+  <input id="propriedade" placeholder="PROPRIEDADE" required oninput="this.value=this.value.toUpperCase()">
+  <input id="nome" placeholder="PROPRIETÁRIO" required oninput="this.value=this.value.toUpperCase()">
+  <input id="endereco" placeholder="ENDEREÇO" oninput="this.value=this.value.toUpperCase()">
+  <input id="telefone" placeholder="TELEFONE">
+  <input id="data" type="date" required>
+  <textarea id="obs" placeholder="OBSERVAÇÕES" oninput="this.value=this.value.toUpperCase()"></textarea>
+  <button type="submit">SALVAR</button>
 </form>
-</div>
 
-<div class="card">
-<h3>Cadastros</h3>
 <table>
 <thead>
 <tr>
-<th>Propriedade</th><th>Nome</th><th>Endereço</th><th>Telefone</th><th>Data</th><th>Dias</th><th>Status</th><th>Usuário</th><th>Obs</th><th>Ações</th>
+<th>Propriedade</th><th>Proprietário</th><th>Endereço</th>
+<th>Telefone</th><th>Data</th><th>Observações</th><th>Ações</th>
 </tr>
 </thead>
-<tbody id="tabela"></tbody>
+<tbody id="lista"></tbody>
 </table>
 
-<button class="btn" onclick="baixarExcel()">Baixar Excel</button>
-<button class="btn" onclick="baixarPDF()">Baixar PDF</button>
+<div style="text-align:center;margin-top:15px">
+  <button onclick="baixarExcel()">Excel</button>
+  <button onclick="baixarPDF()">PDF</button>
 </div>
 
-</div>
+<footer>© Todos os direitos reservados</footer>
 
 <script>
-/***** LOGIN – USUÁRIOS FIXOS *****/
-const usuarios = {
-  RODRIGO:'271011gjs',
-  JANIEL:'1234',
-  CASSIA:'1234',
-  MARCOS:'1234',
-  RAIMUNDA:'1234'
+// 🔐 LOGIN LOCAL
+const usuarios = { RODRIGO:'1234', JANIEL:'1234', CASSIA:'1234', MARCOS:'1234', RAIMUNDA:'1234' };
+function login(){
+  if(usuarios[loginUser.value] !== loginPass.value) return alert("Login inválido");
+  document.getElementById("loginModal").style.display="none";
+}
+
+// 🔑 SUPABASE
+const supabaseClient = window.supabase.createClient(
+ "https://ykqfmgpppvafakcjiicy.supabase.co",
+ "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrcWZtZ3BwcHZhZmFrY2ppaWN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTY0OTEsImV4cCI6MjA4MTc3MjQ5MX0.6iU1kae3XJwJw6l-0Cd7bRarImHWhGbDMAVgUDwdmKo"
+);
+
+let editId = null;
+
+// 🔄 CARREGAR
+async function carregar(){
+  const { data } = await supabaseClient.from("cadastros_idaf").select("*").order("id");
+  lista.innerHTML="";
+  data.forEach(c=>{
+    lista.innerHTML+=`
+    <tr>
+      <td>${c.propriedade}</td>
+      <td>${c.nome}</td>
+      <td>${c.endereco||""}</td>
+      <td>${c.telefone||""}</td>
+      <td>${c.data_abertura}</td>
+      <td>${c.observacoes||""}</td>
+      <td>
+        <button class="editar" onclick="editar(${c.id})">Editar</button>
+        <button class="excluir" onclick="excluir(${c.id})">Excluir</button>
+      </td>
+    </tr>`;
+  });
+}
+
+// 💾 SALVAR
+form.onsubmit=async e=>{
+ e.preventDefault();
+ const dados={
+  propriedade:propriedade.value,
+  nome:nome.value,
+  endereco:endereco.value,
+  telefone:telefone.value,
+  data_abertura:data.value,
+  observacoes:obs.value
+ };
+ editId
+ ? await supabaseClient.from("cadastros_idaf").update(dados).eq("id",editId)
+ : await supabaseClient.from("cadastros_idaf").insert([dados]);
+ editId=null; form.reset(); carregar();
 };
 
-let usuarioAtual = null;
-
-// LOGIN
-const btnLogin = document.getElementById('btnLogin');
-const loginModal = document.getElementById('loginModal');
-
-btnLogin.addEventListener('click', () => {
-  const u = document.getElementById('loginUsuario').value.toUpperCase();
-  const s = document.getElementById('loginSenha').value;
-
-  if (!usuarios[u] || usuarios[u] !== s) {
-    alert('Usuário ou senha inválidos');
-    return;
-  }
-
-  usuarioAtual = u;
-  loginModal.style.display = 'none';
-});
-
-/***** DADOS COM PERSISTÊNCIA *****/
-let cadastros = JSON.parse(localStorage.getItem('cadastros_idaf')) || [];
-let editIndex = null;
-
-const tabela = document.getElementById('tabela');
-const formCadastro = document.getElementById('formCadastro');
-
-function salvarDados() {
-  localStorage.setItem('cadastros_idaf', JSON.stringify(cadastros));
+// ✏️ EDITAR
+async function editar(id){
+ const {data}=await supabaseClient.from("cadastros_idaf").select("*").eq("id",id).single();
+ propriedade.value=data.propriedade;
+ nome.value=data.nome;
+ endereco.value=data.endereco;
+ telefone.value=data.telefone;
+ data.value=data.data_abertura;
+ obs.value=data.observacoes;
+ editId=id;
 }
 
-function diasDiff(d) {
-  return Math.floor((new Date() - new Date(d)) / (1000 * 60 * 60 * 24));
+// ❌ EXCLUIR
+async function excluir(id){
+ if(confirm("Excluir registro?")){
+  await supabaseClient.from("cadastros_idaf").delete().eq("id",id);
+  carregar();
+ }
 }
 
-function render() {
-  tabela.innerHTML = '';
-
-  cadastros.forEach((c, i) => {
-    const dias = diasDiff(c.data);
-    const status = dias > 60 ? 'VENCIDO' : 'NO PRAZO';
-    const cls = dias > 60 ? 'vencido' : 'prazo';
-
-    tabela.innerHTML += `
-      <tr class="${cls}">
-        <td>${c.prop}</td>
-        <td>${c.nome}</td>
-        <td>${c.end}</td>
-        <td>${c.tel}</td>
-        <td>${c.data}</td>
-        <td>${dias}</td>
-        <td>${status}</td>
-        <td>${c.user}</td>
-        <td>${c.obs}</td>
-        <td>
-          <button class="btn-edit" onclick="editar(${i})">Editar</button>
-          <button class="btn-danger" onclick="excluir(${i})">Excluir</button>
-        </td>
-      </tr>`;
-  });
-
-  salvarDados();
+// 📊 EXCEL
+function baixarExcel(){
+ const wb=XLSX.utils.book_new();
+ const ws=XLSX.utils.table_to_sheet(document.querySelector("table"));
+ XLSX.utils.book_append_sheet(wb,ws,"IDAF");
+ XLSX.writeFile(wb,"cadastros_idaf.xlsx");
 }
 
-formCadastro.addEventListener('submit', e => {
-  e.preventDefault();
-
-  if (!usuarioAtual) {
-    alert('Faça login');
-    return;
-  }
-
-  const obj = {
-    prop: document.getElementById('propriedade').value,
-    nome: document.getElementById('nome').value,
-    end: document.getElementById('endereco').value,
-    tel: document.getElementById('telefone').value,
-    data: document.getElementById('data').value,
-    obs: document.getElementById('obs').value,
-    user: usuarioAtual
-  };
-
-  if (editIndex === null) {
-    cadastros.push(obj);
-  } else {
-    cadastros[editIndex] = obj;
-  }
-
-  editIndex = null;
-  formCadastro.reset();
-  render();
-});
-
-function editar(i) {
-  const c = cadastros[i];
-  document.getElementById('propriedade').value = c.prop;
-  document.getElementById('nome').value = c.nome;
-  document.getElementById('endereco').value = c.end;
-  document.getElementById('telefone').value = c.tel;
-  document.getElementById('data').value = c.data;
-  document.getElementById('obs').value = c.obs;
-  editIndex = i;
+// 📄 PDF
+function baixarPDF(){
+ const pdf=new jspdf.jsPDF("landscape");
+ pdf.text("Relatório IDAF",14,15);
+ pdf.autoTable({ html:"table", startY:20 });
+ pdf.save("cadastros_idaf.pdf");
 }
 
-function excluir(i) {
-  if (confirm('Excluir registro?')) {
-    cadastros.splice(i, 1);
-    render();
-  }
-}
-
-// CARREGAR DADOS AO ABRIR
-window.onload = () => {
-  render();
-};
-
-/***** RELATÓRIOS *****/
-function baixarExcel() {
-  if (cadastros.length === 0) {
-    alert('Não há dados para exportar');
-    return;
-  }
-
-  const dados = cadastros.map(c => ({
-    PROPRIEDADE: c.prop,
-    NOME: c.nome,
-    ENDEREÇO: c.end,
-    TELEFONE: c.tel,
-    DATA_ABERTURA: c.data,
-    DIAS: diasDiff(c.data),
-    STATUS: diasDiff(c.data) > 60 ? 'VENCIDO' : 'NO PRAZO',
-    USUÁRIO: c.user,
-    OBSERVAÇÕES: c.obs
-  }));
-
-  const ws = XLSX.utils.json_to_sheet(dados);
-  ws['!cols'] = [
-    { wch: 30 }, { wch: 25 }, { wch: 35 }, { wch: 20 },
-    { wch: 15 }, { wch: 10 }, { wch: 15 }, { wch: 20 }, { wch: 40 }
-  ];
-
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Relatório IDAF');
-  XLSX.writeFile(wb, 'relatorio_idaf.xlsx');
-}
-
-function baixarPDF() {
-  if (cadastros.length === 0) {
-    alert('Não há dados para exportar');
-    return;
-  }
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF('landscape');
-
-  doc.setFontSize(14);
-  doc.text('Relatório de Cadastros Agropecuários – IDAF', 14, 15);
-
-  doc.autoTable({
-    startY: 25,
-    theme: 'grid',
-    head: [[
-      'PROPRIEDADE', 'NOME', 'ENDEREÇO', 'TELEFONE', 'DATA', 'DIAS', 'STATUS', 'USUÁRIO', 'OBSERVAÇÕES'
-    ]],
-    body: cadastros.map(c => ([
-      c.prop,
-      c.nome,
-      c.end,
-      c.tel,
-      c.data,
-      diasDiff(c.data),
-      diasDiff(c.data) > 60 ? 'VENCIDO' : 'NO PRAZO',
-      c.user,
-      c.obs
-    ])),
-    styles: {
-      fontSize: 8,
-      cellPadding: 3
-    },
-    headStyles: {
-      fillColor: [25, 118, 210]
-    }
-  });
-
-  doc.save('relatorio_idaf.pdf');
-}
-
+carregar();
 </script>
-
-<footer style="text-align:center;padding:15px;font-size:12px">Todos os direitos reservados © IDAF</footer>
 
 </body>
 </html>
