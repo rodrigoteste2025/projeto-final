@@ -12,6 +12,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
+
 <style>
 :root{
   --verde:#2e7d32;
@@ -170,6 +171,17 @@ tr:hover{
   background:#333;
 }
 
+.aviso-fixo {
+  background: #fff3cd;
+  color: #856404;
+  padding: 15px;
+  border-left: 6px solid #ffc107;
+  margin-top: 30px;
+  font-family: Arial, sans-serif;
+}
+
+
+
 /* FOOTER */
 footer{
   text-align:center;
@@ -230,12 +242,17 @@ footer{
 
 <h2> Acompanhar os Cadastro de Explorações Agropecuárias</h2>
 
+<div class="aviso-fixo">
+  ⚠️ Aviso: o prazo inicial é de 30 dias, com possibilidade de prorrogação por mais 30 dias!
+</div>
+
+<br><br/>
 <form id="form">
-  <input id="propriedade" placeholder="PROPRIEDADE" required oninput="this.value=this.value.toUpperCase()">
   <input id="nome" placeholder="PROPRIETÁRIO" required oninput="this.value=this.value.toUpperCase()">
+  <input id="propriedade" placeholder="NOME DA COLÔNIA" required oninput="this.value=this.value.toUpperCase()">
   <input id="endereco" placeholder="ENDEREÇO" oninput="this.value=this.value.toUpperCase()">
-  <input id="telefone" placeholder="TELEFONE">
-  <input id="apelido" placeholder="APELIDO">
+  <input id="telefone" placeholder="TELEFONE" type="number">
+  <input id="apelido" placeholder="APELIDO" oninput="this.value=this.value.toUpperCase()">
   <input id="data" type="date" required>
   <textarea id="obs" placeholder="OBSERVAÇÕES" oninput="this.value=this.value.toUpperCase()"></textarea>
   <button type="submit">SALVAR</button>
@@ -244,8 +261,8 @@ footer{
 <table>
 <thead>
 <tr>
-<th>Propriedade</th>
-<th>Proprietário</th>
+<th>nome do produtor</th>
+<th>propriedade</th>
 <th>Endereço</th>
 <th>Telefone</th>
 <th>Data</th>
@@ -323,14 +340,16 @@ async function carregar(){
   data.forEach(c=>{
     lista.innerHTML+=`
     <tr class="${classePrazo(c.data_abertura)}">
-      <td>${c.propriedade}</td>
       <td>${c.nome}</td>
+      <td>${c.propriedade}</td>
       <td>${c.endereco||""}</td>
       <td>${c.telefone||""}</td>
       <td>${c.data_abertura}</td>
       <td>${c.observacoes||""}</td>
       <td>${c.apelido||""}</td>
+
       <td>${calcularPrazo(c.data_abertura)}</td>
+
       <td>
         <button class="editar" onclick="editar(${c.id})">Editar</button>
         <button class="excluir" onclick="excluir(${c.id})">Excluir</button>
@@ -363,8 +382,8 @@ form.onsubmit = async e =>{
 // ✏️ EDITAR
 async function editar(id){
  const {data}=await supabaseClient.from("cadastros_idaf").select("*").eq("id",id).single();
- propriedade.value=data.propriedade;
  nome.value=data.nome;
+ propriedade.value=data.propriedade;
  endereco.value=data.endereco;
  telefone.value=data.telefone;
  data.value=data.data_abertura;
@@ -399,6 +418,8 @@ function baixarPDF(){
 
 carregar();
 </script>
+ 
 
+</div>
 </body>
 </html>
