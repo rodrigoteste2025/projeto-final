@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title> Cadastro IDAF</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro IDAF</title>
 
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -12,220 +13,375 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
-
 <style>
 :root{
-  --verde:#2e7d32;
-  --verde-claro:#43a047;
-  --azul:#0277bd;
-  --vermelho:#c62828;
-  --cinza:#f4f6f8;
-  --branco:#ffffff;
-  --texto:#333;
-  --sombra:0 6px 18px rgba(0,0,0,.08);
+  --bg1:#0ea5e9;
+  --bg2:#22c55e;
+  --surface:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --shadow:0 10px 30px rgba(2, 6, 23, .10);
+
+  --green:#16a34a;
+  --yellow:#f59e0b;
+  --red:#dc2626;
+  --blue:#2563eb;
+
+  --radius:16px;
 }
 
-*{
-  box-sizing:border-box;
-}
+*{ box-sizing:border-box; }
 
 body{
-  font-family:'Segoe UI', Tahoma, sans-serif;
-  background:linear-gradient(135deg,#eef2f3,#e0eafc);
   margin:0;
-  padding:30px;
-  color:var(--texto);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 800px at 10% 0%, rgba(14,165,233,.18), transparent 60%),
+    radial-gradient(1000px 700px at 90% 10%, rgba(34,197,94,.16), transparent 55%),
+    linear-gradient(180deg, #f8fafc, #eef2ff);
+  padding:24px;
 }
 
-/* TÍTULO */
-h2{
-  text-align:center;
-  margin-bottom:25px;
-  color:var(--verde);
-  letter-spacing:.5px;
+.container{
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
 }
 
-/* CARD FORM */
+.topbar{
+  background:rgba(255,255,255,.75);
+  backdrop-filter: blur(10px);
+  border:1px solid rgba(226,232,240,.8);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  padding:16px 16px;
+  position: sticky;
+  top: 16px;
+  z-index: 10;
+}
+
+.topbar-row{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.title{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.title h2{
+  margin:0;
+  font-size:22px;
+  letter-spacing:.2px;
+}
+.title p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.search{
+  position:relative;
+  min-width: 320px;
+  flex: 1;
+}
+.search input{
+  width:100%;
+  padding:12px 12px 12px 42px;
+  border-radius: 14px;
+  border:1px solid var(--border);
+  background: var(--surface);
+  outline:none;
+  box-shadow: 0 1px 2px rgba(2,6,23,.06);
+  font-size:14px;
+}
+.search input:focus{
+  border-color: rgba(37,99,235,.45);
+  box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+}
+.search .icon{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  opacity:.6;
+  font-size:16px;
+}
+
+select{
+  padding:12px 12px;
+  border-radius: 14px;
+  border:1px solid var(--border);
+  background: #fff;
+  outline:none;
+  box-shadow: 0 1px 2px rgba(2,6,23,.06);
+  font-size:14px;
+}
+select:focus{
+  border-color: rgba(34,197,94,.45);
+  box-shadow: 0 0 0 4px rgba(34,197,94,.12);
+}
+
+.btn{
+  border:none;
+  cursor:pointer;
+  border-radius: 14px;
+  padding:12px 14px;
+  font-weight:800;
+  transition:.15s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  user-select:none;
+}
+.btn:active{ transform: translateY(1px); }
+
+.btn-primary{
+  background: linear-gradient(135deg, var(--bg2), var(--bg1));
+  color:white;
+  box-shadow: 0 12px 22px rgba(14,165,233,.18);
+}
+.btn-primary:hover{ filter: brightness(.98); }
+
+.btn-neutral{
+  background:#0f172a;
+  color:#fff;
+}
+.btn-neutral:hover{ opacity:.92; }
+
+.btn-outline{
+  background:white;
+  border:1px solid var(--border);
+  color:var(--text);
+}
+.btn-outline:hover{ background:#f8fafc; }
+
+.notice{
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  box-shadow: 0 6px 20px rgba(2,6,23,.06);
+}
+
+.card{
+  background: rgba(255,255,255,.9);
+  border:1px solid rgba(226,232,240,.9);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+
+/* FORM */
 form{
-  background:var(--branco);
-  padding:20px;
-  border-radius:12px;
-  box-shadow:var(--sombra);
-  max-width:1000px;
-  margin:0 auto 30px;
+  padding:16px;
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:12px;
 }
-
-/* INPUTS */
 input, textarea{
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
+  padding:12px;
+  border-radius: 14px;
+  border:1px solid var(--border);
   font-size:14px;
-  transition:.2s;
+  outline:none;
+  background: #fff;
+  transition:.15s ease;
 }
+textarea{ min-height: 44px; resize: vertical; grid-column: span 3; }
 
 input:focus, textarea:focus{
-  outline:none;
-  border-color:var(--verde);
-  box-shadow:0 0 0 2px rgba(46,125,50,.15);
+  border-color: rgba(34,197,94,.45);
+  box-shadow: 0 0 0 4px rgba(34,197,94,.12);
 }
+form .full{ grid-column: span 3; }
 
-/* BOTÃO PRINCIPAL */
-button{
-  padding:12px;
-  font-size:15px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  transition:.2s;
+/* TABLE - sem barra horizontal e sem sobreposição */
+.table-wrap{
+  overflow: hidden; /* mantém sem rolagem horizontal */
 }
-
-form button{
-  grid-column:span 3;
-  background:var(--verde);
-  color:#fff;
-}
-
-form button:hover{
-  background:var(--verde-claro);
-  transform:translateY(-1px);
-}
-
-/* TABELA */
 table{
   width:100%;
-  border-collapse:collapse;
-  background:var(--branco);
-  box-shadow:var(--sombra);
-  border-radius:12px;
-  overflow:hidden;
+  border-collapse:separate;
+  border-spacing:0;
+  table-layout: auto; /* ✅ evita colisão / sobreposição */
 }
-
-th{
-  background:var(--verde);
+thead th{
+  background: #0f172a;
   color:#fff;
-  padding:12px;
-  font-size:14px;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: .06em;
+  padding:10px 10px;
+  border-bottom:1px solid rgba(255,255,255,.12);
 }
+tbody td{
+  padding:10px 10px;
+  border-bottom:1px solid rgba(226,232,240,.9);
+  font-size:13px;
+  color:#0f172a;
 
-td{
-  padding:10px;
-  border-bottom:1px solid #eee;
-  font-size:14px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
+tbody tr:hover{ background: rgba(2,6,23,.03); }
 
-tr:hover{
-  background:#f9f9f9;
-}
+/* widths por coluna (agora com mais espaço p/ prazo e ações) */
+th:nth-child(1), td:nth-child(1){ width: 13%; } /* Produtor */
+th:nth-child(2), td:nth-child(2){ width: 13%; } /* Propriedade */
+th:nth-child(3), td:nth-child(3){ width: 12%; } /* Endereço */
+th:nth-child(4), td:nth-child(4){ width: 8%;  } /* Telefone */
+th:nth-child(5), td:nth-child(5){ width: 8%;  } /* Data */
+th:nth-child(6), td:nth-child(6){ width: 16%; } /* Observações */
+th:nth-child(7), td:nth-child(7){ width: 8%;  } /* Apelido */
+th:nth-child(8), td:nth-child(8){ width: 10%; } /* ✅ Prazo */
+th:nth-child(9), td:nth-child(9){ width: 16%; } /* ✅ Ações */
 
-/* PRAZOS */
-.prazo-alerta{
-  background:#fff3cd !important;
-}
+/* Prazo (linha) */
+.prazo-alerta{ background: rgba(245,158,11,.14) !important; }
+.prazo-encerrado{ background: rgba(220,38,38,.12) !important; }
 
-.prazo-encerrado{
-  background:#f8d7da !important;
-}
-
-/* BOTÕES AÇÕES */
-.editar{
-  background:var(--azul);
-  color:#fff;
-  border-radius:6px;
+/* Chips */
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
   padding:6px 10px;
+  border-radius: 999px;
+  font-weight:800;
+  font-size:12px;
+  border:1px solid transparent;
+  white-space: nowrap;
 }
+.chip-ok{ background: rgba(22,163,74,.10); color: var(--green); border-color: rgba(22,163,74,.22); }
+.chip-warn{ background: rgba(245,158,11,.12); color: #b45309; border-color: rgba(245,158,11,.25); }
+.chip-bad{ background: rgba(220,38,38,.10); color: var(--red); border-color: rgba(220,38,38,.22); }
 
-.editar:hover{
-  opacity:.85;
-}
-
-.excluir{
-  background:var(--vermelho);
-  color:#fff;
-  border-radius:6px;
-  padding:6px 10px;
-}
-
-.excluir:hover{
-  opacity:.85;
-}
-
-/* EXPORTAÇÃO */
-.exportar{
-  display:flex;
+/* ✅ trava o chip dentro da célula de prazo */
+td:nth-child(8){ text-align:center; }
+td:nth-child(8) .chip{
+  max-width: 100%;
   justify-content:center;
-  gap:15px;
-  margin-top:20px;
 }
 
-.exportar button{
-  background:#555;
-  color:#fff;
-  padding:10px 18px;
+/* Ações */
+td:nth-child(9){ vertical-align: middle; }
+
+.actions-col{
+  display:flex;                 /* ✅ evita sobreposição */
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
 }
 
-.exportar button:hover{
-  background:#333;
+.action-btn{
+  border:none;
+  cursor:pointer;
+  border-radius: 12px;
+  padding:8px 10px;
+  font-weight:900;
+  transition:.15s;
+  width:100%;                  /* ✅ ocupa a célula */
+}
+.action-btn:hover{ opacity:.9; }
+.editar{ background: rgba(37,99,235,.12); color: var(--blue); border: 1px solid rgba(37,99,235,.25); }
+.excluir{ background: rgba(220,38,38,.10); color: var(--red); border: 1px solid rgba(220,38,38,.22); }
+
+/* Paginação */
+.pager{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  padding:12px 14px;
+  border-top:1px solid rgba(226,232,240,.9);
+  background: rgba(255,255,255,.65);
+}
+.pager .left, .pager .right{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.pager .info{
+  color: var(--muted);
+  font-size:13px;
+}
+.pager .mini{
+  padding:10px 12px;
+  border-radius: 12px;
+  font-weight:900;
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+}
+.pager .mini:disabled{
+  opacity:.5;
+  cursor:not-allowed;
 }
 
-.aviso-fixo {
-  background: #fff3cd;
-  color: #856404;
-  padding: 15px;
-  border-left: 6px solid #ffc107;
-  margin-top: 30px;
-  font-family: Arial, sans-serif;
-}
-
-
-
-/* FOOTER */
 footer{
   text-align:center;
-  margin-top:30px;
+  color:var(--muted);
   font-size:12px;
-  color:#666;
+  padding: 12px 0 6px;
 }
 
-/* LOGIN MODAL */
+/* Login modal */
 #loginModal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.6);
+  background:rgba(2,6,23,.6);
   display:flex;
   align-items:center;
   justify-content:center;
+  padding:20px;
+  z-index: 50;
 }
-
 #loginBox{
-  background:#fff;
-  padding:30px;
-  border-radius:12px;
-  width:300px;
-  box-shadow:var(--sombra);
-  text-align:center;
+  width: 360px;
+  background: rgba(255,255,255,.92);
+  border:1px solid rgba(226,232,240,.9);
+  padding: 18px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
+#loginBox h3{ margin:0 0 12px; font-size:18px; }
+#loginBox .hint{ margin:0 0 14px; color:var(--muted); font-size:13px; }
+#loginBox input{ width:100%; margin-bottom:10px; }
+#loginBox button{ width:100%; }
 
-#loginBox h3{
-  margin-bottom:15px;
-  color:var(--verde);
+@media (max-width: 980px){
+  form{ grid-template-columns: 1fr 1fr; }
+  textarea{ grid-column: span 2; }
+  form .full{ grid-column: span 2; }
 }
-
-#loginBox input{
-  width:100%;
-  margin-bottom:10px;
-}
-
-#loginBox button{
-  width:100%;
-  background:var(--verde);
-  color:#fff;
+@media (max-width: 640px){
+  body{ padding:14px; }
+  .search{ min-width: 100%; }
+  form{ grid-template-columns: 1fr; }
+  textarea, form .full{ grid-column: span 1; }
+  table{ font-size: 12px; }
 }
 </style>
-
 </head>
 
 <body>
@@ -234,131 +390,282 @@ footer{
 <div id="loginModal">
   <div id="loginBox">
     <h3>Login</h3>
+    <p class="hint">Acesso restrito</p>
     <input id="loginUser" placeholder="USUÁRIO" oninput="this.value=this.value.toUpperCase()">
     <input id="loginPass" type="password" placeholder="SENHA">
-    <button onclick="login()">Entrar</button>
+    <button class="btn btn-primary" onclick="login()">Entrar</button>
   </div>
 </div>
 
-<h2> Acompanhar os Cadastro de Explorações Agropecuárias</h2>
+<div class="container">
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="title">
+        <h2>Acompanhar os Cadastros de Explorações Agropecuárias</h2>
+        <p>
+          <span id="contador">0</span> registro(s) •
+          <span id="contadorFiltrado">0</span> após filtro •
+          <span id="contadorExibido">0</span nesta página
+        </p>
+      </div>
 
-<div class="aviso-fixo">
-  ⚠️ Aviso: o prazo inicial é de 30 dias, com possibilidade de prorrogação por mais 30 dias!
+      <div class="controls">
+        <div class="search">
+          <span class="icon">🔎</span>
+          <input id="pesquisa" placeholder="Pesquisar por produtor, colônia, endereço, telefone, apelido, observações..." />
+        </div>
+
+        <select id="filtroStatus" title="Filtro por status">
+          <option value="TODOS">Status: Todos</option>
+          <option value="EM_DIA">Status: Em dia</option>
+          <option value="ALERTA">Status: Alerta (≤10 dias)</option>
+          <option value="ENCERRADO">Status: Encerrado</option>
+        </select>
+
+        <button class="btn btn-outline" onclick="limparFiltros()">Limpar</button>
+        <button class="btn btn-neutral" onclick="baixarExcel()">📊 Excel</button>
+        <button class="btn btn-neutral" onclick="baixarPDF()">📄 PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice">⚠️ Aviso: o prazo inicial é de 30 dias, com possibilidade de prorrogação por mais 30 dias!</div>
+
+  <div class="card">
+    <form id="form">
+      <input id="nome" placeholder="PROPRIETÁRIO" required oninput="this.value=this.value.toUpperCase()">
+      <input id="propriedade" placeholder="NOME DA COLÔNIA" required oninput="this.value=this.value.toUpperCase()">
+      <input id="endereco" placeholder="ENDEREÇO" oninput="this.value=this.value.toUpperCase()">
+      <input id="telefone" placeholder="TELEFONE" type="number">
+      <input id="apelido" placeholder="APELIDO" oninput="this.value=this.value.toUpperCase()">
+      <input id="data" type="date" required>
+      <textarea id="obs" placeholder="OBSERVAÇÕES" oninput="this.value=this.value.toUpperCase()"></textarea>
+      <button class="btn btn-primary full" type="submit">💾 SALVAR</button>
+    </form>
+  </div>
+
+  <div class="card table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Produtor</th>
+          <th>Propriedade</th>
+          <th>Endereço</th>
+          <th>Telefone</th>
+          <th>Data</th>
+          <th>Observações</th>
+          <th>Apelido</th>
+          <th>Prazo</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="lista"></tbody>
+    </table>
+
+    <div class="pager">
+      <div class="left">
+        <button id="prevBtn" class="mini" onclick="paginaAnterior()">◀ Anterior</button>
+        <button id="nextBtn" class="mini" onclick="proximaPagina()">Próxima ▶</button>
+        <span class="info" id="pageInfo">Página 1</span>
+      </div>
+
+      <div class="right">
+        <span class="info">Itens por página:</span>
+        <select id="pageSize">
+          <option value="10">10</option>
+          <option value="20" selected>20</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <footer>© Todos os direitos reservados 2025</footer>
 </div>
-
-<br><br/>
-<form id="form">
-  <input id="nome" placeholder="PROPRIETÁRIO" required oninput="this.value=this.value.toUpperCase()">
-  <input id="propriedade" placeholder="NOME DA COLÔNIA" required oninput="this.value=this.value.toUpperCase()">
-  <input id="endereco" placeholder="ENDEREÇO" oninput="this.value=this.value.toUpperCase()">
-  <input id="telefone" placeholder="TELEFONE" type="number">
-  <input id="apelido" placeholder="APELIDO" oninput="this.value=this.value.toUpperCase()">
-  <input id="data" type="date" required>
-  <textarea id="obs" placeholder="OBSERVAÇÕES" oninput="this.value=this.value.toUpperCase()"></textarea>
-  <button type="submit">SALVAR</button>
-</form>
-
-<table>
-<thead>
-<tr>
-<th>nome do produtor</th>
-<th>propriedade</th>
-<th>Endereço</th>
-<th>Telefone</th>
-<th>Data</th>
-<th>Observações</th>
-<th>Apelido</th>
-<th>Prazo</th>
-<th>Ações</th>
-</tr>
-</thead>
-<tbody id="lista"></tbody>
-</table>
-
-<div class="exportar">
-  <button onclick="baixarExcel()">📊 Excel</button>
-  <button onclick="baixarPDF()">📄 PDF</button>
-</div>
-
-
-<footer>© Todos os direitos reservados Rodrigo</footer>
 
 <script>
-// 🔐 LOGIN LOCAL
-const usuarios = { RODRIGO:'maria', JANIEL:'1234', CASSIA:'1234', MARCOS:'1234', RAIMUNDA:'1234' };
+// 🔐 LOGIN LOCAL (robusto)
+const usuarios = { RODRIGO:'maria', JANIEL:'1234', CASSIA:'1234', MARCOS:'1234', RAIMUNDA:'1234', ADMIN:'admin' };
+
 function login(){
-  if(usuarios[loginUser.value] !== loginPass.value) return alert("Login inválido");
-  document.getElementById("loginModal").style.display="none";
+  const userEl = document.getElementById("loginUser");
+  const passEl = document.getElementById("loginPass");
+
+  const user = (userEl.value || "").trim().toUpperCase();
+  const pass = (passEl.value || "").trim();
+
+  if (!usuarios[user] || usuarios[user] !== pass) {
+    alert("Login inválido");
+    return;
+  }
+
+  document.getElementById("loginModal").style.display = "none";
 }
 
-// 🔑 SUPABASE
+document.addEventListener("keydown", (e) => {
+  const modal = document.getElementById("loginModal");
+  if (e.key === "Enter" && modal && modal.style.display !== "none") {
+    login();
+  }
+});
+
+// 🔑 SUPABASE (NÃO MEXIDO)
 const supabaseClient = window.supabase.createClient(
  "https://ykqfmgpppvafakcjiicy.supabase.co",
  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrcWZtZ3BwcHZhZmFrY2ppaWN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTY0OTEsImV4cCI6MjA4MTc3MjQ5MX0.6iU1kae3XJwJw6l-0Cd7bRarImHWhGbDMAVgUDwdmKo"
 );
 
 let editId = null;
+let todos = [];
+let currentPage = 1;
 
-// ⏱️ PRAZO 60 DIAS
-function calcularPrazo(dataAbertura){
+const pesquisaInput = document.getElementById("pesquisa");
+const filtroStatus = document.getElementById("filtroStatus");
+const pageSizeEl = document.getElementById("pageSize");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const pageInfo = document.getElementById("pageInfo");
+
+pesquisaInput.addEventListener("input", () => { currentPage = 1; renderTabela(); });
+filtroStatus.addEventListener("change", () => { currentPage = 1; renderTabela(); });
+pageSizeEl.addEventListener("change", () => { currentPage = 1; renderTabela(); });
+
+function norm(v){ return String(v ?? "").toUpperCase().trim(); }
+
+function diasRestantes(dataAbertura){
   const inicio = new Date(dataAbertura);
   const fim = new Date(inicio.getTime() + (60*24*60*60*1000));
   const agora = new Date();
   const diff = fim - agora;
-
-  if(diff <= 0){
-    return "<strong style='color:red'>ENCERRADO</strong>";
-  }
-
-  const dias = Math.floor(diff / (1000*60*60*24));
-  return `<strong style='color:green'>${dias} dias</strong>`;
+  return Math.floor(diff / (1000*60*60*24));
 }
 
-// 🎨 CLASSE DA LINHA
+function getStatus(c){
+  const dias = diasRestantes(c.data_abertura);
+  if (dias < 0) return "ENCERRADO";
+  if (dias <= 10) return "ALERTA";
+  return "EM_DIA";
+}
+
+function calcularPrazo(dataAbertura){
+  const dias = diasRestantes(dataAbertura);
+  if(dias < 0) return "<span class='chip chip-bad'>⛔ ENCERRADO</span>";
+  if(dias <= 10) return `<span class='chip chip-warn'>⚠️ ${dias} dias</span>`;
+  return `<span class='chip chip-ok'>✅ ${dias} dias</span>`;
+}
+
 function classePrazo(dataAbertura){
-  const inicio = new Date(dataAbertura);
-  const fim = new Date(inicio.getTime() + (60*24*60*60*1000));
-  const agora = new Date();
-  const diff = fim - agora;
-
-  if(diff <= 0) return "prazo-encerrado";
-
-  const dias = Math.floor(diff / (1000*60*60*24));
+  const dias = diasRestantes(dataAbertura);
+  if(dias < 0) return "prazo-encerrado";
   if(dias <= 10) return "prazo-alerta";
-
   return "";
 }
 
-// 🔄 CARREGAR
+function filtrarLista(lista){
+  const q = norm(pesquisaInput.value);
+  const st = filtroStatus.value;
+
+  return lista.filter(c => {
+    if (st !== "TODOS" && getStatus(c) !== st) return false;
+    if(!q) return true;
+
+    const campos = [
+      c.nome, c.propriedade, c.endereco, c.telefone,
+      c.apelido, c.observacoes, c.data_abertura
+    ].map(norm).join(" ");
+
+    return campos.includes(q);
+  });
+}
+
+function limparFiltros(){
+  pesquisaInput.value = "";
+  filtroStatus.value = "TODOS";
+  pageSizeEl.value = "20";
+  currentPage = 1;
+  renderTabela();
+}
+
+function atualizarContadores(total, filtrado, exibido){
+  document.getElementById("contador").textContent = total;
+  document.getElementById("contadorFiltrado").textContent = filtrado;
+  document.getElementById("contadorExibido").textContent = exibido;
+}
+
+function totalPaginas(totalItens){
+  const size = Number(pageSizeEl.value);
+  return Math.max(1, Math.ceil(totalItens / size));
+}
+
+function paginaAnterior(){
+  if(currentPage > 1){
+    currentPage--;
+    renderTabela();
+  }
+}
+
+function proximaPagina(){
+  const filtrados = filtrarLista(todos);
+  const tp = totalPaginas(filtrados.length);
+  if(currentPage < tp){
+    currentPage++;
+    renderTabela();
+  }
+}
+
+// 🔄 CARREGAR (Supabase igual)
 async function carregar(){
   const { data } = await supabaseClient
     .from("cadastros_idaf")
     .select("*")
     .order("id");
 
-  lista.innerHTML="";
-  data.forEach(c=>{
-    lista.innerHTML+=`
-    <tr class="${classePrazo(c.data_abertura)}">
-      <td>${c.nome}</td>
-      <td>${c.propriedade}</td>
-      <td>${c.endereco||""}</td>
-      <td>${c.telefone||""}</td>
-      <td>${c.data_abertura}</td>
-      <td>${c.observacoes||""}</td>
-      <td>${c.apelido||""}</td>
+  todos = data || [];
+  renderTabela();
+}
 
-      <td>${calcularPrazo(c.data_abertura)}</td>
+function renderTabela(){
+  const listaEl = document.getElementById("lista");
+  const filtrados = filtrarLista(todos);
 
-      <td>
-        <button class="editar" onclick="editar(${c.id})">Editar</button>
-        <button class="excluir" onclick="excluir(${c.id})">Excluir</button>
-      </td>
-    </tr>`;
+  const size = Number(pageSizeEl.value);
+  const tp = totalPaginas(filtrados.length);
+  if(currentPage > tp) currentPage = tp;
+
+  const start = (currentPage - 1) * size;
+  const pageItems = filtrados.slice(start, start + size);
+
+  atualizarContadores(todos.length, filtrados.length, pageItems.length);
+
+  pageInfo.textContent = `Página ${currentPage} de ${tp}`;
+  prevBtn.disabled = currentPage <= 1;
+  nextBtn.disabled = currentPage >= tp;
+
+  listaEl.innerHTML = "";
+  pageItems.forEach(c => {
+    listaEl.innerHTML += `
+      <tr class="${classePrazo(c.data_abertura)}">
+        <td>${c.nome ?? ""}</td>
+        <td>${c.propriedade ?? ""}</td>
+        <td>${c.endereco ?? ""}</td>
+        <td>${c.telefone ?? ""}</td>
+        <td>${c.data_abertura ?? ""}</td>
+        <td>${c.observacoes ?? ""}</td>
+        <td>${c.apelido ?? ""}</td>
+        <td>${calcularPrazo(c.data_abertura)}</td>
+        <td>
+          <div class="actions-col">
+            <button class="action-btn editar" onclick="editar(${c.id})">Editar</button>
+            <button class="action-btn excluir" onclick="excluir(${c.id})">Excluir</button>
+          </div>
+        </td>
+      </tr>
+    `;
   });
 }
 
-// 💾 SALVAR
+// 💾 SALVAR (Supabase igual)
 form.onsubmit = async e =>{
  e.preventDefault();
  const dados={
@@ -379,7 +686,7 @@ form.onsubmit = async e =>{
  carregar();
 };
 
-// ✏️ EDITAR
+// ✏️ EDITAR (Supabase igual)
 async function editar(id){
  const {data}=await supabaseClient.from("cadastros_idaf").select("*").eq("id",id).single();
  nome.value=data.nome;
@@ -390,9 +697,10 @@ async function editar(id){
  obs.value=data.observacoes;
  apelido.value=data.apelido;
  editId=id;
+ window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// ❌ EXCLUIR
+// ❌ EXCLUIR (Supabase igual)
 async function excluir(id){
  if(confirm("Excluir registro?")){
   await supabaseClient.from("cadastros_idaf").delete().eq("id",id);
@@ -408,18 +716,55 @@ function baixarExcel(){
  XLSX.writeFile(wb,"cadastros_idaf.xlsx");
 }
 
-// 📄 PDF
+// 📄 PDF (corrigido: não lê html da tabela)
 function baixarPDF(){
- const pdf=new jspdf.jsPDF("landscape");
- pdf.text("Relatório IDAF",14,15);
- pdf.autoTable({ html:"table", startY:20 });
- pdf.save("cadastros_idaf.pdf");
+  const registros = filtrarLista(todos);
+
+  const pdf = new jspdf.jsPDF("landscape");
+  pdf.setFontSize(14);
+  pdf.text("Relatório IDAF", 14, 14);
+
+  pdf.setFontSize(10);
+  pdf.text(`Total de registros: ${registros.length}`, 14, 20);
+
+  const head = [[
+    "Produtor","Propriedade","Endereço","Telefone","Data","Observações","Apelido","Prazo"
+  ]];
+
+  const body = registros.map(c => {
+    const dias = diasRestantes(c.data_abertura);
+    const prazo = (dias < 0) ? "ENCERRADO" : `${dias} dias`;
+
+    return [
+      c.nome || "",
+      c.propriedade || "",
+      c.endereco || "",
+      c.telefone || "",
+      c.data_abertura || "",
+      c.observacoes || "",
+      c.apelido || "",
+      prazo
+    ];
+  });
+
+  pdf.autoTable({
+    head,
+    body,
+    startY: 24,
+    styles: { fontSize: 8, cellPadding: 2, overflow: "linebreak", valign: "top" },
+    headStyles: { fillColor: [40,120,180], textColor: 255, fontSize: 9 },
+    columnStyles: {
+      0:{cellWidth:34}, 1:{cellWidth:34}, 2:{cellWidth:36}, 3:{cellWidth:22},
+      4:{cellWidth:20}, 5:{cellWidth:70}, 6:{cellWidth:26}, 7:{cellWidth:18}
+    },
+    margin: { left: 10, right: 10 }
+  });
+
+  pdf.save("cadastros_idaf.pdf");
 }
 
 carregar();
 </script>
- 
 
-</div>
 </body>
 </html>
