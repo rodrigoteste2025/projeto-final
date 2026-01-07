@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Cadastro IDAF</title>
 
 <!-- SUPABASE -->
@@ -15,16 +15,20 @@
 
 <style>
 :root{
+  /* Base */
   --bg:#f3f4f6;
   --surface:#ffffff;
-  --text:#111827;
-  --muted:#6b7280;
+  --surface-2:#f9fafb;
+  --text:#0f172a;
+  --muted:#64748b;
   --border:#d1d5db;
   --border2:#e5e7eb;
 
+  /* Brand */
   --primary:#1f6fb2;
   --primary-dark:#185a8d;
 
+  /* Status */
   --danger:#b91c1c;
   --danger-soft:#ffe6e6;
 
@@ -34,25 +38,54 @@
   --ok:#166534;
   --ok-soft:#e8f7ee;
 
-  --shadow: 0 8px 22px rgba(0,0,0,.08);
-  --radius: 12px;
-  --radius-sm: 10px;
+  /* Effects */
+  --shadow-sm: 0 4px 14px rgba(2, 6, 23, .08);
+  --shadow: 0 10px 26px rgba(2, 6, 23, .10);
+  --radius: 14px;
+  --radius-sm: 12px;
+
+  --ring: 0 0 0 4px rgba(31,111,178,.14);
+
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b1220;
+    --surface:#0f172a;
+    --surface-2:#111c33;
+    --text:#e5e7eb;
+    --muted:#94a3b8;
+    --border:#24324d;
+    --border2:#1f2a44;
+
+    --shadow-sm: 0 6px 18px rgba(0,0,0,.40);
+    --shadow: 0 14px 34px rgba(0,0,0,.50);
+    --ring: 0 0 0 4px rgba(56,189,248,.18);
+
+    --danger-soft: rgba(185,28,28,.18);
+    --warning-soft: rgba(180,83,9,.18);
+    --ok-soft: rgba(22,101,52,.20);
+  }
 }
 
 *{ box-sizing:border-box; }
-
+html{ -webkit-text-size-adjust:100%; }
 body{
   margin:0;
   padding:16px;
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--bg);
+  font-family: var(--font);
+  background: radial-gradient(1200px 600px at 20% -10%, rgba(31,111,178,.10), transparent 60%),
+              radial-gradient(900px 500px at 110% 10%, rgba(34,197,94,.08), transparent 55%),
+              var(--bg);
   color: var(--text);
+  line-height: 1.35;
 }
 
 /* container */
 .container{
-  max-width:1200px;
-  margin:0 auto;
+  max-width: 1200px;
+  margin: 0 auto;
   display:flex;
   flex-direction:column;
   gap:12px;
@@ -60,14 +93,15 @@ body{
 
 /* topbar */
 .topbar{
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
   border: 1px solid var(--border2);
   border-radius: var(--radius);
   padding: 14px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 10px;
   z-index: 10;
+  backdrop-filter: blur(8px);
 }
 
 .topbar-row{
@@ -79,6 +113,7 @@ body{
 .title h2{
   margin:0;
   font-size: 18px;
+  letter-spacing: .2px;
 }
 .title p{
   margin:6px 0 0;
@@ -99,64 +134,100 @@ body{
   min-width: 240px;
   position: relative;
 }
-
 .search .icon{
   position:absolute;
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  opacity:.55;
+  opacity:.65;
   font-size: 14px;
 }
 
-.search input{
-  width:100%;
-  padding: 10px 12px 10px 36px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: #fff;
-  font-size: 14px;
-  outline:none;
-}
-
-.search input:focus{
-  border-color: rgba(31,111,178,.55);
-  box-shadow: 0 0 0 3px rgba(31,111,178,.12);
-}
-
+/* ✅ IMPORTANTE: checkbox/radio NÃO entram nessa regra */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
 select{
+  width: 100%;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background: #fff;
   font-size: 14px;
   outline:none;
+  background: var(--surface);
+  color: var(--text);
+  transition: box-shadow .15s ease, border-color .15s ease, transform .05s ease;
 }
-select:focus{
+
+.search input{
+  padding: 10px 12px 10px 36px;
+}
+
+input::placeholder, textarea::placeholder{
+  color: color-mix(in srgb, var(--muted) 80%, transparent);
+}
+
+input:focus, textarea:focus, select:focus{
   border-color: rgba(31,111,178,.55);
-  box-shadow: 0 0 0 3px rgba(31,111,178,.12);
+  box-shadow: var(--ring);
+}
+
+input:focus-visible, textarea:focus-visible, select:focus-visible,
+button:focus-visible{
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+/* remove setas do number (opcional) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance: none; margin:0; }
+input[type="number"]{ -moz-appearance: textfield; }
+
+/* ✅ checkbox/radio bonitos e visíveis */
+input[type="checkbox"],
+input[type="radio"]{
+  width: auto;
+  height: auto;
+  padding: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
 }
 
 /* buttons */
 button, .btn{
+  width: auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background: #f9fafb;
+  background: var(--surface-2);
+  color: var(--text);
   font-size: 14px;
   cursor:pointer;
-  transition: .15s ease;
+  transition: transform .06s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
+  user-select: none;
 }
 
 button:hover, .btn:hover{
-  background: #f3f4f6;
+  background: color-mix(in srgb, var(--surface-2) 60%, var(--surface) 40%);
+  box-shadow: 0 6px 16px rgba(2,6,23,.10);
+}
+button:active, .btn:active{ transform: translateY(1px); }
+
+button:disabled, .btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  box-shadow:none;
+  transform:none;
 }
 
 .btn-primary{
   background: var(--primary);
-  border-color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 70%, #000 30%);
   color: #fff;
-  font-weight: bold;
+  font-weight: 700;
 }
 .btn-primary:hover{
   background: var(--primary-dark);
@@ -167,7 +238,7 @@ button:hover, .btn:hover{
   background: #374151;
   border-color: #374151;
   color:#fff;
-  font-weight: bold;
+  font-weight: 700;
 }
 .btn-neutral:hover{
   background: #1f2937;
@@ -175,17 +246,17 @@ button:hover, .btn:hover{
 }
 
 .btn-outline{
-  background: #fff;
+  background: var(--surface);
 }
 
 /* notices */
 .notice, .aviso-fixo{
   background: var(--warning-soft);
-  border: 1px solid #f3d08a;
+  border: 1px solid color-mix(in srgb, var(--warning) 22%, var(--border2));
   color: var(--warning);
   padding: 12px 14px;
   border-radius: var(--radius);
-  box-shadow: 0 6px 16px rgba(0,0,0,.06);
+  box-shadow: var(--shadow-sm);
 }
 
 /* card */
@@ -205,28 +276,36 @@ form{
   gap:10px;
 }
 
-input, textarea{
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  font-size: 14px;
-  outline:none;
-  background: #fff;
-}
-
-input:focus, textarea:focus{
-  border-color: rgba(31,111,178,.55);
-  box-shadow: 0 0 0 3px rgba(31,111,178,.12);
-}
-
 textarea{
   grid-column: span 3;
   resize: vertical;
-  min-height: 42px;
+  min-height: 44px;
 }
 
-form .full{
+form .full{ grid-column: span 3; }
+
+/* ✅ linha do checkbox no form */
+.check-row{
   grid-column: span 3;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface) 75%, var(--surface-2));
+}
+.check-row label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+.check-row small{
+  color: var(--muted);
+  font-weight: 500;
 }
 
 /* table */
@@ -239,13 +318,14 @@ table{
 }
 
 thead th{
-  background: #0f2f4a;
+  background: linear-gradient(180deg, #0f2f4a, #0b243a);
   color: #fff;
   padding: 10px;
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: .04em;
-  border-bottom: 1px solid rgba(255,255,255,.15);
+  letter-spacing: .05em;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  white-space: nowrap;
 }
 
 tbody td{
@@ -256,8 +336,8 @@ tbody td{
   overflow-wrap:anywhere;
 }
 
-tbody tr:nth-child(even){ background:#fafafa; }
-tbody tr:hover{ background:#eef6ff; }
+tbody tr:nth-child(even){ background: color-mix(in srgb, var(--surface) 92%, var(--surface-2)); }
+tbody tr:hover{ background: color-mix(in srgb, rgba(31,111,178,.10) 60%, var(--surface)); }
 
 /* prazo destaque por linha */
 .prazo-alerta{ background: rgba(245,158,11,.10) !important; }
@@ -270,22 +350,23 @@ tbody tr:hover{ background:#eef6ff; }
   justify-content:center;
   padding: 5px 10px;
   border-radius: 999px;
-  font-weight: bold;
+  font-weight: 800;
   font-size: 12px;
   border: 1px solid var(--border);
-  background: #f3f4f6;
+  background: var(--surface-2);
   white-space: nowrap;
 }
 
-.chip-ok{ background: var(--ok-soft); border-color: rgba(22,101,52,.25); color: var(--ok); }
-.chip-warn{ background: var(--warning-soft); border-color: rgba(180,83,9,.25); color: var(--warning); }
-.chip-bad{ background: var(--danger-soft); border-color: rgba(185,28,28,.25); color: var(--danger); }
+.chip-ok{ background: var(--ok-soft); border-color: rgba(22,101,52,.28); color: var(--ok); }
+.chip-warn{ background: var(--warning-soft); border-color: rgba(180,83,9,.28); color: var(--warning); }
+.chip-bad{ background: var(--danger-soft); border-color: rgba(185,28,28,.28); color: var(--danger); }
 
 /* actions */
 .actions-col{
   display:flex;
   flex-direction: column;
   gap:6px;
+  min-width: 120px;
 }
 
 .action-btn{
@@ -294,28 +375,33 @@ tbody tr:hover{ background:#eef6ff; }
   border-radius: 10px;
   border:1px solid var(--border);
   font-size: 13px;
-  font-weight: bold;
+  font-weight: 800;
 }
 
 .editar{
-  background: #eaf2ff;
+  background: rgba(31,111,178,.12);
   border-color: rgba(31,111,178,.25);
-  color: #1f6fb2;
+  color: color-mix(in srgb, var(--primary) 92%, #000 8%);
 }
-.editar:hover{ background:#dfeaff; }
+.editar:hover{ background: rgba(31,111,178,.18); }
 
 .excluir{
-  background: #ffecec;
+  background: rgba(185,28,28,.10);
   border-color: rgba(185,28,28,.25);
-  color: #b91c1c;
+  color: var(--danger);
 }
-.excluir:hover{ background:#ffdede; }
+.excluir:hover{ background: rgba(185,28,28,.16); }
+
+/* ✅ checkbox na tabela alinhado */
+td input[type="checkbox"]{
+  vertical-align: middle;
+}
 
 /* pagination */
 .pager{
   padding: 12px 14px;
   border-top: 1px solid var(--border2);
-  background: #f9fafb;
+  background: color-mix(in srgb, var(--surface) 82%, var(--surface-2));
   display:flex;
   justify-content: space-between;
   gap:10px;
@@ -339,7 +425,7 @@ tbody tr:hover{ background:#eef6ff; }
   padding: 8px 10px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background:#fff;
+  background: var(--surface);
 }
 .pager .mini:disabled{
   opacity:.55;
@@ -350,7 +436,7 @@ tbody tr:hover{ background:#eef6ff; }
 #loginModal{
   position:fixed;
   inset:0;
-  background: rgba(0,0,0,.55);
+  background: rgba(0, 0, 0, 0.55);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -359,20 +445,28 @@ tbody tr:hover{ background:#eef6ff; }
 }
 
 #loginBox{
-  width: 320px;
-  background: #fff;
+  width: 340px;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
   box-shadow: var(--shadow);
 }
 #loginBox h3{
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   font-size: 16px;
+}
+#loginBox .hint{
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
 }
 #loginBox input{
   width:100%;
   margin-bottom: 10px;
+}
+#loginBox button{
+  width:100%;
 }
 
 /* footer */
@@ -386,7 +480,7 @@ footer{
 /* responsive */
 @media (max-width: 900px){
   form{ grid-template-columns: 1fr 1fr; }
-  textarea, form .full{ grid-column: span 2; }
+  textarea, form .full, .check-row{ grid-column: span 2; }
 }
 
 @media (max-width: 650px){
@@ -395,8 +489,62 @@ footer{
   .search{ min-width: 100%; }
   button, select{ width:100%; }
   form{ grid-template-columns: 1fr; }
-  textarea, form .full{ grid-column: span 1; }
+  textarea, form .full, .check-row{ grid-column: span 1; }
 }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{ transition: none !important; scroll-behavior: auto !important; }
+}
+/* ====== APENAS DEIXAR MAIS CLARO (SEM MEXER NA LARGURA) ====== */
+
+/* Força tema claro (mesmo se o PC estiver em modo escuro) */
+:root{
+  --bg:#ffffff;
+  --surface:#ffffff;
+  --surface-2:#f8fafc;
+  --text:#111827;
+  --muted:#6b7280;
+  --border:#d1d5db;
+  --border2:#e5e7eb;
+
+  --shadow-sm: 0 4px 14px rgba(0,0,0,.06);
+  --shadow: 0 10px 26px rgba(0,0,0,.08);
+}
+
+/* Se existir dark-mode no CSS, neutraliza aqui */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#ffffff;
+    --surface:#ffffff;
+    --surface-2:#f8fafc;
+    --text:#111827;
+    --muted:#6b7280;
+    --border:#d1d5db;
+    --border2:#e5e7eb;
+  }
+}
+
+/* Fundo branco (remove gradiente/escuro) */
+body{
+  background: #ffffff !important;
+}
+
+/* ✅ DESFAZ “alargamentos” que cortam a tela */
+.container{ max-width: 1200px !important; }     /* volta ao normal */
+table{ min-width: unset !important; }          /* remove min-width */
+th, td{ min-width: unset !important; }         /* remove min-width por coluna */
+.table-wrap{ overflow-x: auto; }               /* se precisar, rola só a tabela */
+
+/* Mantém texto legível e não cortado */
+tbody td{
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+
+
+
 
 </style>
 </head>
@@ -457,6 +605,16 @@ footer{
       <input id="telefone" placeholder="TELEFONE" type="number">
       <input id="apelido" placeholder="APELIDO" oninput="this.value=this.value.toUpperCase()">
       <input id="data" type="date" required>
+
+      <!-- ✅ CAIXINHA (voltou) -->
+      <div class="check-row">
+        <label>
+          <input id="aberto" type="checkbox" />
+          ABERTO NO SISDAF?
+        </label>
+        <small>Marque quando o cadastro já tiver sido aberto no sistema.</small>
+      </div>
+
       <textarea id="obs" placeholder="OBSERVAÇÕES" oninput="this.value=this.value.toUpperCase()"></textarea>
       <button class="btn btn-primary full" type="submit">💾 SALVAR</button>
     </form>
@@ -471,6 +629,7 @@ footer{
           <th>Endereço</th>
           <th>Telefone</th>
           <th>Data</th>
+          <th>Aberto SISDAF</th>
           <th>Observações</th>
           <th>Apelido</th>
           <th>Prazo</th>
@@ -590,7 +749,8 @@ function filtrarLista(lista){
 
     const campos = [
       c.nome, c.propriedade, c.endereco, c.telefone,
-      c.apelido, c.observacoes, c.data_abertura
+      c.apelido, c.observacoes, c.data_abertura,
+      (c.aberto_sisdaf ? "SIM" : "NAO")
     ].map(norm).join(" ");
 
     return campos.includes(q);
@@ -643,6 +803,23 @@ async function carregar(){
   renderTabela();
 }
 
+/* ✅ Atualiza o checkbox direto na tabela */
+async function atualizarAberto(id, checked){
+  const { error } = await supabaseClient
+    .from("cadastros_idaf")
+    .update({ aberto_sisdaf: !!checked })
+    .eq("id", id);
+
+  if(error){
+    alert("Não foi possível atualizar a caixinha (verifique se existe a coluna 'aberto_sisdaf' no Supabase).");
+    carregar();
+  } else {
+    // atualiza local sem precisar recarregar tudo
+    const item = todos.find(x => x.id === id);
+    if(item) item.aberto_sisdaf = !!checked;
+  }
+}
+
 function renderTabela(){
   const listaEl = document.getElementById("lista");
   const filtrados = filtrarLista(todos);
@@ -662,6 +839,7 @@ function renderTabela(){
 
   listaEl.innerHTML = "";
   pageItems.forEach(c => {
+    const checked = c.aberto_sisdaf ? "checked" : "";
     listaEl.innerHTML += `
       <tr class="${classePrazo(c.data_abertura)}">
         <td>${c.nome ?? ""}</td>
@@ -669,6 +847,10 @@ function renderTabela(){
         <td>${c.endereco ?? ""}</td>
         <td>${c.telefone ?? ""}</td>
         <td>${c.data_abertura ?? ""}</td>
+        <td>
+          <input type="checkbox" ${checked}
+                 onchange="atualizarAberto(${c.id}, this.checked)">
+        </td>
         <td>${c.observacoes ?? ""}</td>
         <td>${c.apelido ?? ""}</td>
         <td>${calcularPrazo(c.data_abertura)}</td>
@@ -683,7 +865,7 @@ function renderTabela(){
   });
 }
 
-// 💾 SALVAR (Supabase igual)
+// 💾 SALVAR (Supabase igual + campo do checkbox)
 form.onsubmit = async e =>{
  e.preventDefault();
  const dados={
@@ -694,6 +876,7 @@ form.onsubmit = async e =>{
   data_abertura:data.value,
   observacoes:obs.value,
   apelido:apelido.value,
+  aberto_sisdaf: !!document.getElementById("aberto").checked
  };
  editId
  ? await supabaseClient.from("cadastros_idaf").update(dados).eq("id",editId)
@@ -701,10 +884,11 @@ form.onsubmit = async e =>{
 
  editId=null;
  form.reset();
+ document.getElementById("aberto").checked = false;
  carregar();
 };
 
-// ✏️ EDITAR (Supabase igual)
+// ✏️ EDITAR (Supabase igual + checkbox)
 async function editar(id){
  const {data}=await supabaseClient.from("cadastros_idaf").select("*").eq("id",id).single();
  nome.value=data.nome;
@@ -714,6 +898,7 @@ async function editar(id){
  data.value=data.data_abertura;
  obs.value=data.observacoes;
  apelido.value=data.apelido;
+ document.getElementById("aberto").checked = !!data.aberto_sisdaf;
  editId=id;
  window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -734,7 +919,7 @@ function baixarExcel(){
  XLSX.writeFile(wb,"cadastros_idaf.xlsx");
 }
 
-// 📄 PDF (corrigido: não lê html da tabela)
+// 📄 PDF (inclui a coluna "Aberto SISDAF")
 function baixarPDF(){
   const registros = filtrarLista(todos);
 
@@ -746,12 +931,13 @@ function baixarPDF(){
   pdf.text(`Total de registros: ${registros.length}`, 14, 20);
 
   const head = [[
-    "Produtor","Propriedade","Endereço","Telefone","Data","Observações","Apelido","Prazo"
+    "Produtor","Propriedade","Endereço","Telefone","Data","Aberto SISDAF","Observações","Apelido","Prazo"
   ]];
 
   const body = registros.map(c => {
     const dias = diasRestantes(c.data_abertura);
     const prazo = (dias < 0) ? "ENCERRADO" : `${dias} dias`;
+    const aberto = c.aberto_sisdaf ? "SIM" : "NÃO";
 
     return [
       c.nome || "",
@@ -759,6 +945,7 @@ function baixarPDF(){
       c.endereco || "",
       c.telefone || "",
       c.data_abertura || "",
+      aberto,
       c.observacoes || "",
       c.apelido || "",
       prazo
@@ -772,8 +959,8 @@ function baixarPDF(){
     styles: { fontSize: 8, cellPadding: 2, overflow: "linebreak", valign: "top" },
     headStyles: { fillColor: [40,120,180], textColor: 255, fontSize: 9 },
     columnStyles: {
-      0:{cellWidth:34}, 1:{cellWidth:34}, 2:{cellWidth:36}, 3:{cellWidth:22},
-      4:{cellWidth:20}, 5:{cellWidth:70}, 6:{cellWidth:26}, 7:{cellWidth:18}
+      0:{cellWidth:30}, 1:{cellWidth:30}, 2:{cellWidth:32}, 3:{cellWidth:22},
+      4:{cellWidth:18}, 5:{cellWidth:20}, 6:{cellWidth:62}, 7:{cellWidth:22}, 8:{cellWidth:16}
     },
     margin: { left: 10, right: 10 }
   });
