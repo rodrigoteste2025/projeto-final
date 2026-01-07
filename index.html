@@ -15,610 +15,518 @@
 
 <style>
 :root{
-  --text:#0f172a;
-  --muted:#64748b;
-  --border:#d7dde7;
-  --border2:#e6ebf2;
-  --shadow:0 10px 26px rgba(2,6,23,.08);
+  --bg:#f3f4f6;
+  --surface:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --border:#d1d5db;
+  --border2:#e5e7eb;
 
-  --primary:#2563eb;
-  --primary2:#1d4ed8;
+  --primary:#1f6fb2;
+  --primary-dark:#185a8d;
 
-  --danger:#dc2626;
-  --dangerSoft:#fee2e2;
+  --danger:#b91c1c;
+  --danger-soft:#ffe6e6;
 
-  --ok:#16a34a;
-  --okSoft:#dcfce7;
+  --warning:#b45309;
+  --warning-soft:#fff3cd;
 
-  --warn:#f59e0b;
-  --warnSoft:#ffedd5;
+  --ok:#166534;
+  --ok-soft:#e8f7ee;
 
-  --radius:16px;
-  --radiusSm:12px;
+  --shadow: 0 8px 22px rgba(0,0,0,.08);
+  --radius: 12px;
+  --radius-sm: 10px;
 }
 
 *{ box-sizing:border-box; }
 
 body{
   margin:0;
-  font-family: Arial, Helvetica, sans-serif;
-  color:var(--text);
-  background: linear-gradient(180deg, #f7f9ff, #eef2ff);
   padding:16px;
-
-  /* ✅ evita rolagem horizontal */
-  overflow-x: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
 
+/* container */
 .container{
-  max-width: 1400px;
+  max-width:1200px;
   margin:0 auto;
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:12px;
 }
 
-h2{ margin:0; font-size:20px; }
+/* topbar */
+.topbar{
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 10px;
+  z-index: 10;
+}
 
+.topbar-row{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.title h2{
+  margin:0;
+  font-size: 18px;
+}
+.title p{
+  margin:6px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* controls */
+.controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+}
+
+.search{
+  flex: 1;
+  min-width: 240px;
+  position: relative;
+}
+
+.search .icon{
+  position:absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity:.55;
+  font-size: 14px;
+}
+
+.search input{
+  width:100%;
+  padding: 10px 12px 10px 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 14px;
+  outline:none;
+}
+
+.search input:focus{
+  border-color: rgba(31,111,178,.55);
+  box-shadow: 0 0 0 3px rgba(31,111,178,.12);
+}
+
+select{
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 14px;
+  outline:none;
+}
+select:focus{
+  border-color: rgba(31,111,178,.55);
+  box-shadow: 0 0 0 3px rgba(31,111,178,.12);
+}
+
+/* buttons */
+button, .btn{
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: #f9fafb;
+  font-size: 14px;
+  cursor:pointer;
+  transition: .15s ease;
+}
+
+button:hover, .btn:hover{
+  background: #f3f4f6;
+}
+
+.btn-primary{
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: bold;
+}
+.btn-primary:hover{
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.btn-neutral{
+  background: #374151;
+  border-color: #374151;
+  color:#fff;
+  font-weight: bold;
+}
+.btn-neutral:hover{
+  background: #1f2937;
+  border-color: #1f2937;
+}
+
+.btn-outline{
+  background: #fff;
+}
+
+/* notices */
+.notice, .aviso-fixo{
+  background: var(--warning-soft);
+  border: 1px solid #f3d08a;
+  color: var(--warning);
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  box-shadow: 0 6px 16px rgba(0,0,0,.06);
+}
+
+/* card */
 .card{
-  background: rgba(255,255,255,.95);
+  background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   overflow:hidden;
 }
 
-.cardHeader{
-  padding:12px 14px;
-  border-bottom:1px solid var(--border2);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-  background:#fbfdff;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid var(--border2);
-  background:#fff;
-  font-size:12px;
-  color:var(--muted);
-}
-
-.controls{
-  display:grid;
-  grid-template-columns: 1fr 240px 240px 220px auto auto;
-  gap:10px;
-  padding:12px 14px;
-}
-
-.field{ position:relative; }
-.field .icon{
-  position:absolute;
-  left:10px;
-  top:50%;
-  transform:translateY(-50%);
-  opacity:.6;
-  font-size:14px;
-}
-.field input{
-  width:100%;
-  padding:10px 12px 10px 32px;
-  border-radius: var(--radiusSm);
-  border:1px solid var(--border);
-  background:#fff;
-  outline:none;
-}
-
-select{
-  width:100%;
-  padding:10px 12px;
-  border-radius: var(--radiusSm);
-  border:1px solid var(--border);
-  background:#fff;
-  outline:none;
-}
-
-.btn{
-  border:none;
-  cursor:pointer;
-  border-radius: var(--radiusSm);
-  padding:10px 12px;
-  font-weight:700;
-  transition:.15s ease;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  user-select:none;
-  white-space:nowrap;
-}
-.btn:active{ transform: translateY(1px); }
-
-.btnPrimary{ background: linear-gradient(135deg, var(--primary), var(--primary2)); color:#fff; }
-.btnGhost{ background:#fff; border:1px solid var(--border2); color:var(--text); }
-.btnDark{ background:#0f172a; color:#fff; }
-
-.notice{
-  padding:12px 14px;
-  border-radius: var(--radius);
-  border:1px solid rgba(245,158,11,.28);
-  background: rgba(255,237,213,.85);
-  color:#9a3412;
-}
-
-/* Form */
-.form{
-  padding:12px 14px 14px;
+/* form */
+form{
+  padding:14px;
   display:grid;
   grid-template-columns: repeat(3, 1fr);
   gap:10px;
 }
-.input, textarea{
-  width:100%;
-  padding:10px 12px;
-  border-radius: var(--radiusSm);
-  border:1px solid var(--border);
+
+input, textarea{
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: 14px;
   outline:none;
-  background:#fff;
+  background: #fff;
 }
+
+input:focus, textarea:focus{
+  border-color: rgba(31,111,178,.55);
+  box-shadow: 0 0 0 3px rgba(31,111,178,.12);
+}
+
 textarea{
   grid-column: span 3;
-  min-height: 42px;
   resize: vertical;
-}
-.form .full{ grid-column: span 3; }
-
-/* ✅ TABELA (sem rolagem horizontal) */
-.tableWrap{
-  overflow: hidden;
-  background:#fff;
+  min-height: 42px;
 }
 
-/* ✅ grade (linhas e colunas) bem visível */
+form .full{
+  grid-column: span 3;
+}
+
+/* table */
+.table-wrap{ overflow-x:auto; }
+
 table{
-  width: 100%;
-  border-collapse: collapse; /* 🔥 importante para as linhas ficarem certinhas */
-  table-layout: fixed;       /* cabe na tela */
+  width:100%;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 thead th{
-  background:#0f172a;
-  color:#fff;
-  padding:10px 8px;
-  font-size:11px;
+  background: #0f2f4a;
+  color: #fff;
+  padding: 10px;
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: .05em;
-
-  border: 1px solid rgba(255,255,255,.18); /* linha no cabeçalho */
+  letter-spacing: .04em;
+  border-bottom: 1px solid rgba(255,255,255,.15);
 }
 
 tbody td{
-  padding:10px 8px;
-  font-size:12px;
+  padding: 10px;
+  border-bottom: 1px solid var(--border2);
+  font-size: 13px;
   vertical-align: top;
-  background:#fff;
-
-  /* ✅ linhas visíveis */
-  border: 1px solid #cfd7e6;
-
-  /* ✅ quebra de linha e nada de corte */
-  white-space: normal;
-  overflow: hidden;
-  text-overflow: clip;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  line-height: 1.3;
+  overflow-wrap:anywhere;
 }
 
-tbody tr:hover td{
-  background: #f6f9ff;
-}
+tbody tr:nth-child(even){ background:#fafafa; }
+tbody tr:hover{ background:#eef6ff; }
 
-.prazo-alerta td{ background: rgba(245,158,11,.10) !important; }
-.prazo-encerrado td{ background: rgba(220,38,38,.10) !important; }
+/* prazo destaque por linha */
+.prazo-alerta{ background: rgba(245,158,11,.10) !important; }
+.prazo-encerrado{ background: rgba(220,38,38,.08) !important; }
 
-/* ✅ Larguras em % (cabem sem barra) */
-th:nth-child(1), td:nth-child(1){ width: 12%; } /* produtor */
-th:nth-child(2), td:nth-child(2){ width: 10%; } /* propriedade */
-th:nth-child(3), td:nth-child(3){ width: 12%; } /* endereço */
-th:nth-child(4), td:nth-child(4){ width: 8%; }  /* telefone */
-th:nth-child(5), td:nth-child(5){ width: 8%; }  /* data */
-th:nth-child(6), td:nth-child(6){ width: 26%; } /* observações */
-th:nth-child(7), td:nth-child(7){ width: 8%; text-align:center; vertical-align:middle; } /* aberta */
-th:nth-child(8), td:nth-child(8){ width: 9%; text-align:center; vertical-align:middle; } /* prazo */
-th:nth-child(9), td:nth-child(9){ width: 11%; } /* ações */
-
-/* ✅ evita ENCERRADO sobrepor Ações */
-td:nth-child(8){
-  overflow: hidden !important;
-}
-td:nth-child(8) .chip{
-  max-width: 100% !important;
-  white-space: normal !important; /* permite quebrar */
-  text-align:center;
-}
-
-/* Chips */
+/* chips */
 .chip{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:6px;
-  padding:5px 8px;
-  border-radius:999px;
-  font-weight:800;
-  font-size:11px;
-  border:1px solid transparent;
-}
-.chipOk{ background: var(--okSoft); color: var(--ok); border-color: rgba(22,163,74,.22); }
-.chipWarn{ background: var(--warnSoft); color: #b45309; border-color: rgba(245,158,11,.25); }
-.chipBad{ background: var(--dangerSoft); color: var(--danger); border-color: rgba(220,38,38,.22); }
-
-.checkCell input{
-  width:18px;
-  height:18px;
-  cursor:pointer;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-weight: bold;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  background: #f3f4f6;
+  white-space: nowrap;
 }
 
-/* Ações */
-.actions{
+.chip-ok{ background: var(--ok-soft); border-color: rgba(22,101,52,.25); color: var(--ok); }
+.chip-warn{ background: var(--warning-soft); border-color: rgba(180,83,9,.25); color: var(--warning); }
+.chip-bad{ background: var(--danger-soft); border-color: rgba(185,28,28,.25); color: var(--danger); }
+
+/* actions */
+.actions-col{
   display:flex;
+  flex-direction: column;
   gap:6px;
-  flex-direction:column;
-  align-items: stretch;
 }
-.actionBtn{
-  border:1px solid rgba(226,232,240,.9);
-  background:#fff;
+
+.action-btn{
+  width:100%;
+  padding: 8px 10px;
   border-radius: 10px;
-  padding:7px 8px;
-  font-weight:800;
-  cursor:pointer;
-  font-size:12px;
-  transition:.15s ease;
+  border:1px solid var(--border);
+  font-size: 13px;
+  font-weight: bold;
 }
-.actionBtn:hover{ transform: translateY(-1px); }
-.editBtn{ background: rgba(37,99,235,.10); border-color: rgba(37,99,235,.22); color: var(--primary2); }
-.delBtn{ background: rgba(220,38,38,.08); border-color: rgba(220,38,38,.20); color: var(--danger); }
 
-/* Footer */
-.footerBar{
+.editar{
+  background: #eaf2ff;
+  border-color: rgba(31,111,178,.25);
+  color: #1f6fb2;
+}
+.editar:hover{ background:#dfeaff; }
+
+.excluir{
+  background: #ffecec;
+  border-color: rgba(185,28,28,.25);
+  color: #b91c1c;
+}
+.excluir:hover{ background:#ffdede; }
+
+/* pagination */
+.pager{
+  padding: 12px 14px;
+  border-top: 1px solid var(--border2);
+  background: #f9fafb;
   display:flex;
-  justify-content:space-between;
-  align-items:center;
+  justify-content: space-between;
   gap:10px;
-  flex-wrap:wrap;
-  padding:10px 14px;
-  border-top:1px solid var(--border2);
-  background:#fbfdff;
+  flex-wrap: wrap;
+  align-items:center;
 }
-.footerBar small{ color: var(--muted); }
 
-/* LOGIN */
+.pager .left, .pager .right{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.pager .info{
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.pager .mini{
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background:#fff;
+}
+.pager .mini:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+/* login */
 #loginModal{
   position:fixed;
   inset:0;
-  background: rgba(2,6,23,.65);
+  background: rgba(0,0,0,.55);
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:20px;
-  z-index: 2000;
+  padding: 20px;
+  z-index: 50;
 }
+
 #loginBox{
-  width: 360px;
-  background: rgba(255,255,255,.95);
-  border:1px solid rgba(226,232,240,.9);
+  width: 320px;
+  background: #fff;
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
   box-shadow: var(--shadow);
 }
-#loginBox h3{ margin:0 0 10px; font-size:16px; }
+#loginBox h3{
+  margin: 0 0 10px;
+  font-size: 16px;
+}
 #loginBox input{
   width:100%;
-  padding:10px 12px;
-  border-radius: var(--radiusSm);
-  border:1px solid var(--border);
-  outline:none;
-  margin-bottom:10px;
-}
-#loginBox button{ width:100%; }
-
-/* LOADING */
-#loadingOverlay{
-  position:fixed;
-  inset:0;
-  background: rgba(255,255,255,.75);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index: 1500;
-}
-.loadingBox{
-  background:#fff;
-  border:1px solid var(--border2);
-  border-radius: var(--radius);
-  padding:16px 18px;
-  box-shadow: var(--shadow);
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:800;
-}
-.spinner{
-  width:18px;
-  height:18px;
-  border:3px solid #cbd5e1;
-  border-top-color: var(--primary);
-  border-radius:50%;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin{ to{ transform: rotate(360deg); } }
-
-/* TOAST */
-#toast{
-  position: fixed;
-  right: 14px;
-  bottom: 14px;
-  z-index: 3000;
-  display:none;
-  max-width: 340px;
-}
-.toastBox{
-  background:#0f172a;
-  color:#fff;
-  padding:12px 14px;
-  border-radius: 14px;
-  box-shadow: var(--shadow);
-  display:flex;
-  gap:10px;
-  align-items:flex-start;
-}
-.toastBox small{ color: rgba(255,255,255,.75); display:block; margin-top:2px; }
-.toastIcon{
-  width:26px;
-  height:26px;
-  border-radius: 9px;
-  background: rgba(22,163,74,.18);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  margin-bottom: 10px;
 }
 
-/* MODAL CONFIRMAÇÃO */
-#confirmModal{
-  position: fixed;
-  inset: 0;
-  background: rgba(2,6,23,.55);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index: 2500;
-}
-.confirmBox{
-  width: 420px;
-  max-width: 100%;
-  background:#fff;
-  border:1px solid var(--border2);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow:hidden;
-}
-.confirmHead{
-  padding:12px 14px;
-  background:#fbfdff;
-  border-bottom:1px solid var(--border2);
-  font-weight:900;
-}
-.confirmBody{
-  padding:14px;
-  color: var(--text);
-}
-.confirmBody p{ margin: 0; color: var(--muted); }
-.confirmFooter{
-  padding:12px 14px;
-  border-top:1px solid var(--border2);
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-}
-.btnDanger{
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  color:#fff;
+/* footer */
+footer{
+  text-align:center;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 10px;
 }
 
-/* Responsive */
-@media (max-width: 1100px){
-  .controls{ grid-template-columns: 1fr 1fr; }
-}
+/* responsive */
 @media (max-width: 900px){
-  .form{ grid-template-columns: 1fr 1fr; }
-  textarea, .form .full{ grid-column: span 2; }
-
-  tbody td{ font-size: 11px; padding: 8px 6px; }
-  thead th{ font-size: 10px; padding: 9px 6px; }
+  form{ grid-template-columns: 1fr 1fr; }
+  textarea, form .full{ grid-column: span 2; }
 }
+
 @media (max-width: 650px){
   body{ padding:12px; }
-  .controls{ grid-template-columns: 1fr; }
-  .form{ grid-template-columns: 1fr; }
-  textarea, .form .full{ grid-column: span 1; }
-  .btn{ width:100%; }
+  .controls{ flex-direction: column; align-items: stretch; }
+  .search{ min-width: 100%; }
+  button, select{ width:100%; }
+  form{ grid-template-columns: 1fr; }
+  textarea, form .full{ grid-column: span 1; }
 }
+
 </style>
 </head>
 
 <body>
 
-<!-- LOADING -->
-<div id="loadingOverlay">
-  <div class="loadingBox">
-    <div class="spinner"></div>
-    <div>Carregando…</div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div id="toast">
-  <div class="toastBox">
-    <div class="toastIcon">✅</div>
-    <div>
-      <b id="toastTitle">Salvo com sucesso</b>
-      <small id="toastMsg">Alteração registrada.</small>
-    </div>
-  </div>
-</div>
-
-<!-- CONFIRM MODAL -->
-<div id="confirmModal">
-  <div class="confirmBox">
-    <div class="confirmHead">Confirmar exclusão</div>
-    <div class="confirmBody">
-      <b>Deseja excluir este registro?</b>
-      <p>Essa ação não pode ser desfeita.</p>
-    </div>
-    <div class="confirmFooter">
-      <button class="btn btnGhost" onclick="closeConfirm()">Cancelar</button>
-      <button class="btn btnDanger" id="confirmOkBtn">Excluir</button>
-    </div>
-  </div>
-</div>
-
 <!-- LOGIN -->
 <div id="loginModal">
   <div id="loginBox">
     <h3>Login</h3>
+    <p class="hint">Acesso restrito</p>
     <input id="loginUser" placeholder="USUÁRIO" oninput="this.value=this.value.toUpperCase()">
     <input id="loginPass" type="password" placeholder="SENHA">
-    <button class="btn btnPrimary" onclick="login()">Entrar</button>
+    <button class="btn btn-primary" onclick="login()">Entrar</button>
   </div>
 </div>
 
 <div class="container">
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="title">
+        <h2>Acompanhar os Cadastros de Explorações Agropecuárias</h2>
+        <p>
+          <span id="contador">0</span> registro(s) •
+          <span id="contadorFiltrado">0</span> após filtro •
+          <span id="contadorExibido">0</span nesta página
+        </p>
+      </div>
 
-  <div class="card">
-    <div class="cardHeader">
-      <div>
-        <h2>Cadastros IDAF</h2>
-        <div class="badge">
-          <span><b id="contador">0</b> total</span> •
-          <span><b id="contadorFiltrado">0</b> filtrados</span> •
-          <span><b id="contadorExibido">0</b> na página</span>
+      <div class="controls">
+        <div class="search">
+          <span class="icon">🔎</span>
+          <input id="pesquisa" placeholder="Pesquisar por produtor, colônia, endereço, telefone, apelido, observações..." />
         </div>
-      </div>
-      <div class="badge" id="pageInfo">Página 1</div>
-    </div>
 
-    <div class="controls">
-      <div class="field">
-        <span class="icon">🔎</span>
-        <input id="pesquisa" placeholder="Pesquisar..." />
-      </div>
+        <select id="filtroStatus" title="Filtro por status">
+          <option value="TODOS">Status: Todos</option>
+          <option value="EM_DIA">Status: Em dia</option>
+          <option value="ALERTA">Status: Alerta (≤10 dias)</option>
+          <option value="ENCERRADO">Status: Encerrado</option>
+        </select>
 
-      <select id="filtroStatus">
-        <option value="TODOS">Status: Todos</option>
-        <option value="EM_DIA">Status: Em dia</option>
-        <option value="ALERTA">Status: Alerta (≤10 dias)</option>
-        <option value="ENCERRADO">Status: Encerrado</option>
-      </select>
-
-      <select id="filtroAberta">
-        <option value="TODOS">Aberta no sistema: Todos</option>
-        <option value="SIM">Aberta no sistema: Sim</option>
-        <option value="NAO">Aberta no sistema: Não</option>
-      </select>
-
-      <select id="pageSize">
-        <option value="10">10 / página</option>
-        <option value="20" selected>20 / página</option>
-        <option value="30">30 / página</option>
-        <option value="50">50 / página</option>
-      </select>
-
-      <button class="btn btnGhost" onclick="limparFiltros()">Limpar</button>
-      <button class="btn btnDark" onclick="baixarExcel()">📊 Excel</button>
-    </div>
-
-    <div class="footerBar">
-      <div>
-        <button id="prevBtn" class="btn btnGhost" onclick="paginaAnterior()">◀ Anterior</button>
-        <button id="nextBtn" class="btn btnGhost" onclick="proximaPagina()">Próxima ▶</button>
-      </div>
-      <div>
-        <button class="btn btnDark" onclick="baixarPDF()">📄 PDF</button>
+        <button class="btn btn-outline" onclick="limparFiltros()">Limpar</button>
+        <button class="btn btn-neutral" onclick="baixarExcel()">📊 Excel</button>
+        <button class="btn btn-neutral" onclick="baixarPDF()">📄 PDF</button>
       </div>
     </div>
   </div>
 
   <div class="notice">⚠️ Aviso: o prazo inicial é de 30 dias, com possibilidade de prorrogação por mais 30 dias!</div>
+  <div class="notice">⚠️ Aviso: depois da abertura do cadastro no SISDAF, clicar em excluir!</div>
 
   <div class="card">
-    <div class="cardHeader">
-      <span class="badge">📝 Cadastro</span>
-      <span class="badge" id="editBadge">Novo registro</span>
-    </div>
-
-    <form id="form" class="form">
-      <input class="input" id="nome" placeholder="PRODUTOR" required oninput="this.value=this.value.toUpperCase()">
-      <input class="input" id="propriedade" placeholder="PROPRIEDADE" required oninput="this.value=this.value.toUpperCase()">
-      <input class="input" id="endereco" placeholder="ENDEREÇO" oninput="this.value=this.value.toUpperCase()">
-      <input class="input" id="telefone" placeholder="TELEFONE">
-      <input class="input" id="data" type="date" required>
+    <form id="form">
+      <input id="nome" placeholder="PROPRIETÁRIO" required oninput="this.value=this.value.toUpperCase()">
+      <input id="propriedade" placeholder="NOME DA COLÔNIA" required oninput="this.value=this.value.toUpperCase()">
+      <input id="endereco" placeholder="ENDEREÇO" oninput="this.value=this.value.toUpperCase()">
+      <input id="telefone" placeholder="TELEFONE" type="number">
+      <input id="apelido" placeholder="APELIDO" oninput="this.value=this.value.toUpperCase()">
+      <input id="data" type="date" required>
       <textarea id="obs" placeholder="OBSERVAÇÕES" oninput="this.value=this.value.toUpperCase()"></textarea>
-      <button class="btn btnPrimary full" type="submit">💾 Salvar</button>
+      <button class="btn btn-primary full" type="submit">💾 SALVAR</button>
     </form>
   </div>
 
-  <div class="card">
-    <div class="cardHeader">
-      <span class="badge">📋 Registros</span>
-      <span class="badge">Clique no checkbox para marcar SIM/NÃO</span>
-    </div>
+  <div class="card table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Produtor</th>
+          <th>Propriedade</th>
+          <th>Endereço</th>
+          <th>Telefone</th>
+          <th>Data</th>
+          <th>Observações</th>
+          <th>Apelido</th>
+          <th>Prazo</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="lista"></tbody>
+    </table>
 
-    <div class="tableWrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Produtor</th>
-            <th>Propriedade</th>
-            <th>Endereço</th>
-            <th>Telefone</th>
-            <th>Data</th>
-            <th>Observações</th>
-            <th>Aberta no sistema</th>
-            <th>Prazo</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="lista"></tbody>
-      </table>
-    </div>
+    <div class="pager">
+      <div class="left">
+        <button id="prevBtn" class="mini" onclick="paginaAnterior()">◀ Anterior</button>
+        <button id="nextBtn" class="mini" onclick="proximaPagina()">Próxima ▶</button>
+        <span class="info" id="pageInfo">Página 1</span>
+      </div>
 
-    <div class="footerBar">
-      <small>© 2025 • Sistema de Cadastros</small>
-      <small>Dica: use filtros e pesquisa no topo</small>
+      <div class="right">
+        <span class="info">Itens por página:</span>
+        <select id="pageSize">
+          <option value="10">10</option>
+          <option value="20" selected>20</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+        </select>
+      </div>
     </div>
   </div>
 
+  <footer>© Todos os direitos reservados 2025</footer>
 </div>
 
 <script>
-// 🔐 LOGIN LOCAL
+// 🔐 LOGIN LOCAL (robusto)
 const usuarios = { RODRIGO:'maria', JANIEL:'1234', CASSIA:'1234', MARCOS:'1234', RAIMUNDA:'1234', ADMIN:'admin' };
+
 function login(){
-  const user = (document.getElementById("loginUser").value || "").trim().toUpperCase();
-  const pass = (document.getElementById("loginPass").value || "").trim();
-  if (!usuarios[user] || usuarios[user] !== pass) return alert("Login inválido");
-  document.getElementById("loginModal").style.display="none";
+  const userEl = document.getElementById("loginUser");
+  const passEl = document.getElementById("loginPass");
+
+  const user = (userEl.value || "").trim().toUpperCase();
+  const pass = (passEl.value || "").trim();
+
+  if (!usuarios[user] || usuarios[user] !== pass) {
+    alert("Login inválido");
+    return;
+  }
+
+  document.getElementById("loginModal").style.display = "none";
 }
+
+document.addEventListener("keydown", (e) => {
+  const modal = document.getElementById("loginModal");
+  if (e.key === "Enter" && modal && modal.style.display !== "none") {
+    login();
+  }
+});
 
 // 🔑 SUPABASE (NÃO MEXIDO)
 const supabaseClient = window.supabase.createClient(
@@ -632,36 +540,14 @@ let currentPage = 1;
 
 const pesquisaInput = document.getElementById("pesquisa");
 const filtroStatus = document.getElementById("filtroStatus");
-const filtroAberta = document.getElementById("filtroAberta");
 const pageSizeEl = document.getElementById("pageSize");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const pageInfo = document.getElementById("pageInfo");
-const editBadge = document.getElementById("editBadge");
-
-const loadingOverlay = document.getElementById("loadingOverlay");
-const toast = document.getElementById("toast");
-const toastTitle = document.getElementById("toastTitle");
-const toastMsg = document.getElementById("toastMsg");
-
-const confirmModal = document.getElementById("confirmModal");
-const confirmOkBtn = document.getElementById("confirmOkBtn");
 
 pesquisaInput.addEventListener("input", () => { currentPage = 1; renderTabela(); });
 filtroStatus.addEventListener("change", () => { currentPage = 1; renderTabela(); });
-filtroAberta.addEventListener("change", () => { currentPage = 1; renderTabela(); });
 pageSizeEl.addEventListener("change", () => { currentPage = 1; renderTabela(); });
-
-function showLoading(on){ loadingOverlay.style.display = on ? "flex" : "none"; }
-
-let toastTimer = null;
-function showToast(title, msg){
-  toastTitle.textContent = title || "Salvo com sucesso";
-  toastMsg.textContent = msg || "Alteração registrada.";
-  toast.style.display = "block";
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { toast.style.display = "none"; }, 2200);
-}
 
 function norm(v){ return String(v ?? "").toUpperCase().trim(); }
 
@@ -673,11 +559,18 @@ function diasRestantes(dataAbertura){
   return Math.floor(diff / (1000*60*60*24));
 }
 
-function calcularPrazoChip(dataAbertura){
+function getStatus(c){
+  const dias = diasRestantes(c.data_abertura);
+  if (dias < 0) return "ENCERRADO";
+  if (dias <= 10) return "ALERTA";
+  return "EM_DIA";
+}
+
+function calcularPrazo(dataAbertura){
   const dias = diasRestantes(dataAbertura);
-  if(dias < 0) return `<span class="chip chipBad">⛔ ENCERRADO</span>`;
-  if(dias <= 10) return `<span class="chip chipWarn">⚠️ ${dias} dias</span>`;
-  return `<span class="chip chipOk">✅ ${dias} dias</span>`;
+  if(dias < 0) return "<span class='chip chip-bad'>⛔ ENCERRADO</span>";
+  if(dias <= 10) return `<span class='chip chip-warn'>⚠️ ${dias} dias</span>`;
+  return `<span class='chip chip-ok'>✅ ${dias} dias</span>`;
 }
 
 function classePrazo(dataAbertura){
@@ -687,33 +580,17 @@ function classePrazo(dataAbertura){
   return "";
 }
 
-function getStatus(c){
-  const dias = diasRestantes(c.data_abertura);
-  if (dias < 0) return "ENCERRADO";
-  if (dias <= 10) return "ALERTA";
-  return "EM_DIA";
-}
-
 function filtrarLista(lista){
   const q = norm(pesquisaInput.value);
   const st = filtroStatus.value;
-  const ab = filtroAberta.value;
 
   return lista.filter(c => {
     if (st !== "TODOS" && getStatus(c) !== st) return false;
-
-    if (ab !== "TODOS"){
-      const isSim = !!c.aberta_no_sistema;
-      if (ab === "SIM" && !isSim) return false;
-      if (ab === "NAO" && isSim) return false;
-    }
-
     if(!q) return true;
 
     const campos = [
       c.nome, c.propriedade, c.endereco, c.telefone,
-      c.observacoes, c.data_abertura,
-      c.aberta_no_sistema ? "SIM" : "NAO"
+      c.apelido, c.observacoes, c.data_abertura
     ].map(norm).join(" ");
 
     return campos.includes(q);
@@ -723,7 +600,6 @@ function filtrarLista(lista){
 function limparFiltros(){
   pesquisaInput.value = "";
   filtroStatus.value = "TODOS";
-  filtroAberta.value = "TODOS";
   pageSizeEl.value = "20";
   currentPage = 1;
   renderTabela();
@@ -740,45 +616,28 @@ function totalPaginas(totalItens){
   return Math.max(1, Math.ceil(totalItens / size));
 }
 
-function paginaAnterior(){ if(currentPage > 1){ currentPage--; renderTabela(); } }
+function paginaAnterior(){
+  if(currentPage > 1){
+    currentPage--;
+    renderTabela();
+  }
+}
+
 function proximaPagina(){
   const filtrados = filtrarLista(todos);
   const tp = totalPaginas(filtrados.length);
-  if(currentPage < tp){ currentPage++; renderTabela(); }
-}
-
-async function toggleAberta(id, valor){
-  showLoading(true);
-  const { error } = await supabaseClient
-    .from("cadastros_idaf")
-    .update({ aberta_no_sistema: valor })
-    .eq("id", id);
-  showLoading(false);
-
-  if(error){
-    alert("Erro ao salvar: " + error.message);
-    await carregar();
-    return;
+  if(currentPage < tp){
+    currentPage++;
+    renderTabela();
   }
-
-  const item = todos.find(x => x.id === id);
-  if(item) item.aberta_no_sistema = valor;
-
-  showToast("Salvo com sucesso", valor ? "Marcado como SIM." : "Marcado como NÃO.");
 }
 
+// 🔄 CARREGAR (Supabase igual)
 async function carregar(){
-  showLoading(true);
-  const { data, error } = await supabaseClient
+  const { data } = await supabaseClient
     .from("cadastros_idaf")
     .select("*")
     .order("id");
-  showLoading(false);
-
-  if(error){
-    alert("Erro ao carregar: " + error.message);
-    return;
-  }
 
   todos = data || [];
   renderTabela();
@@ -811,18 +670,12 @@ function renderTabela(){
         <td>${c.telefone ?? ""}</td>
         <td>${c.data_abertura ?? ""}</td>
         <td>${c.observacoes ?? ""}</td>
-
-        <td class="checkCell">
-          <input type="checkbox" ${c.aberta_no_sistema ? "checked" : ""}
-            onchange="toggleAberta(${c.id}, this.checked)">
-        </td>
-
-        <td>${calcularPrazoChip(c.data_abertura)}</td>
-
+        <td>${c.apelido ?? ""}</td>
+        <td>${calcularPrazo(c.data_abertura)}</td>
         <td>
-          <div class="actions">
-            <button class="actionBtn editBtn" onclick="editar(${c.id})">Editar</button>
-            <button class="actionBtn delBtn" onclick="confirmarExcluir(${c.id})">Excluir</button>
+          <div class="actions-col">
+            <button class="action-btn editar" onclick="editar(${c.id})">Editar</button>
+            <button class="action-btn excluir" onclick="excluir(${c.id})">Excluir</button>
           </div>
         </td>
       </tr>
@@ -830,6 +683,7 @@ function renderTabela(){
   });
 }
 
+// 💾 SALVAR (Supabase igual)
 form.onsubmit = async e =>{
  e.preventDefault();
  const dados={
@@ -838,74 +692,41 @@ form.onsubmit = async e =>{
   endereco:endereco.value,
   telefone:telefone.value,
   data_abertura:data.value,
-  observacoes:obs.value
+  observacoes:obs.value,
+  apelido:apelido.value,
  };
-
- showLoading(true);
- const resp = editId
-   ? await supabaseClient.from("cadastros_idaf").update(dados).eq("id",editId)
-   : await supabaseClient.from("cadastros_idaf").insert([dados]);
- showLoading(false);
-
- if(resp.error){
-  alert("Erro ao salvar: " + resp.error.message);
-  return;
- }
+ editId
+ ? await supabaseClient.from("cadastros_idaf").update(dados).eq("id",editId)
+ : await supabaseClient.from("cadastros_idaf").insert([dados]);
 
  editId=null;
- editBadge.textContent = "Novo registro";
  form.reset();
- showToast("Salvo com sucesso", "Registro salvo.");
  carregar();
 };
 
+// ✏️ EDITAR (Supabase igual)
 async function editar(id){
- showLoading(true);
- const {data, error}=await supabaseClient.from("cadastros_idaf").select("*").eq("id",id).single();
- showLoading(false);
-
- if(error){
-  alert("Erro ao carregar registro: " + error.message);
-  return;
- }
-
+ const {data}=await supabaseClient.from("cadastros_idaf").select("*").eq("id",id).single();
  nome.value=data.nome;
  propriedade.value=data.propriedade;
  endereco.value=data.endereco;
  telefone.value=data.telefone;
- document.getElementById("data").value=data.data_abertura;
+ data.value=data.data_abertura;
  obs.value=data.observacoes;
+ apelido.value=data.apelido;
  editId=id;
- editBadge.textContent = `Editando ID: ${id}`;
  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/* modal excluir */
-let pendingDeleteId = null;
-function confirmarExcluir(id){
-  pendingDeleteId = id;
-  confirmModal.style.display = "flex";
-  confirmOkBtn.onclick = async () => { await excluirConfirmado(); };
-}
-function closeConfirm(){
-  confirmModal.style.display = "none";
-  pendingDeleteId = null;
-}
-async function excluirConfirmado(){
-  if(!pendingDeleteId) return;
-  closeConfirm();
-  showLoading(true);
-  const { error } = await supabaseClient.from("cadastros_idaf").delete().eq("id",pendingDeleteId);
-  showLoading(false);
-
-  if(error){
-    alert("Erro ao excluir: " + error.message);
-    return;
-  }
-  showToast("Excluído", "Registro removido com sucesso.");
+// ❌ EXCLUIR (Supabase igual)
+async function excluir(id){
+ if(confirm("Excluir registro?")){
+  await supabaseClient.from("cadastros_idaf").delete().eq("id",id);
   carregar();
+ }
 }
 
+// 📊 EXCEL
 function baixarExcel(){
  const wb=XLSX.utils.book_new();
  const ws=XLSX.utils.table_to_sheet(document.querySelector("table"));
@@ -913,6 +734,7 @@ function baixarExcel(){
  XLSX.writeFile(wb,"cadastros_idaf.xlsx");
 }
 
+// 📄 PDF (corrigido: não lê html da tabela)
 function baixarPDF(){
   const registros = filtrarLista(todos);
 
@@ -920,8 +742,11 @@ function baixarPDF(){
   pdf.setFontSize(14);
   pdf.text("Relatório IDAF", 14, 14);
 
+  pdf.setFontSize(10);
+  pdf.text(`Total de registros: ${registros.length}`, 14, 20);
+
   const head = [[
-    "Produtor","Propriedade","Endereço","Telefone","Data","Observações","Aberta no sistema","Prazo"
+    "Produtor","Propriedade","Endereço","Telefone","Data","Observações","Apelido","Prazo"
   ]];
 
   const body = registros.map(c => {
@@ -935,7 +760,7 @@ function baixarPDF(){
       c.telefone || "",
       c.data_abertura || "",
       c.observacoes || "",
-      c.aberta_no_sistema ? "SIM" : "NÃO",
+      c.apelido || "",
       prazo
     ];
   });
@@ -943,10 +768,13 @@ function baixarPDF(){
   pdf.autoTable({
     head,
     body,
-    startY: 20,
+    startY: 24,
     styles: { fontSize: 8, cellPadding: 2, overflow: "linebreak", valign: "top" },
-    headStyles: { fillColor: [15, 23, 42], textColor: 255, fontSize: 9 },
-    columnStyles: { 5:{cellWidth:100} },
+    headStyles: { fillColor: [40,120,180], textColor: 255, fontSize: 9 },
+    columnStyles: {
+      0:{cellWidth:34}, 1:{cellWidth:34}, 2:{cellWidth:36}, 3:{cellWidth:22},
+      4:{cellWidth:20}, 5:{cellWidth:70}, 6:{cellWidth:26}, 7:{cellWidth:18}
+    },
     margin: { left: 10, right: 10 }
   });
 
