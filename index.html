@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <title>Cadastro IDAF</title>
 
 <!-- SUPABASE -->
@@ -10,541 +11,448 @@
 
 <!-- EXCEL / PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
 <style>
+
 :root{
-  /* Base */
-  --bg:#f3f4f6;
+  --bg:#f5f7fb;
   --surface:#ffffff;
-  --surface-2:#f9fafb;
-  --text:#0f172a;
-  --muted:#64748b;
-  --border:#d1d5db;
-  --border2:#e5e7eb;
+  --surface-2:#f8fafc;
 
-  /* Brand */
-  --primary:#1f6fb2;
-  --primary-dark:#185a8d;
+  --text:#111827;
+  --muted:#6b7280;
 
-  /* Status */
-  --danger:#b91c1c;
-  --danger-soft:#ffe6e6;
+  --border:#dbe3ef;
 
-  --warning:#b45309;
-  --warning-soft:#fff3cd;
+  --primary:#2563eb;
+  --primary-dark:#1d4ed8;
 
-  --ok:#166534;
-  --ok-soft:#e8f7ee;
+  --danger:#dc2626;
+  --warning:#f59e0b;
+  --success:#16a34a;
 
-  /* Effects */
-  --shadow-sm: 0 4px 14px rgba(2, 6, 23, .08);
-  --shadow: 0 10px 26px rgba(2, 6, 23, .10);
-  --radius: 14px;
-  --radius-sm: 12px;
+  --radius:18px;
 
-  --ring: 0 0 0 4px rgba(31,111,178,.14);
+  --shadow:
+    0 10px 30px rgba(0,0,0,.06);
 
-  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --font:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#0b1220;
-    --surface:#0f172a;
-    --surface-2:#111c33;
-    --text:#e5e7eb;
-    --muted:#94a3b8;
-    --border:#24324d;
-    --border2:#1f2a44;
-
-    --shadow-sm: 0 6px 18px rgba(0,0,0,.40);
-    --shadow: 0 14px 34px rgba(0,0,0,.50);
-    --ring: 0 0 0 4px rgba(56,189,248,.18);
-
-    --danger-soft: rgba(185,28,28,.18);
-    --warning-soft: rgba(180,83,9,.18);
-    --ok-soft: rgba(22,101,52,.20);
-  }
-}
-
-*{ box-sizing:border-box; }
-html{ -webkit-text-size-adjust:100%; }
-body{
+*{
   margin:0;
-  padding:16px;
-  font-family: var(--font);
-  background: radial-gradient(1200px 600px at 20% -10%, rgba(31,111,178,.10), transparent 60%),
-              radial-gradient(900px 500px at 110% 10%, rgba(34,197,94,.08), transparent 55%),
-              var(--bg);
-  color: var(--text);
-  line-height: 1.35;
+  padding:0;
+  box-sizing:border-box;
 }
 
-/* container */
+body{
+  font-family:var(--font);
+  background:
+    linear-gradient(135deg,#eff6ff,#f8fafc);
+
+  color:var(--text);
+
+  padding:20px;
+}
+
 .container{
-  max-width: 1200px;
-  margin: 0 auto;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  max-width:1400px;
+  margin:auto;
 }
 
-/* topbar */
 .topbar{
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 14px;
-  box-shadow: var(--shadow-sm);
-  position: sticky;
-  top: 10px;
-  z-index: 10;
-  backdrop-filter: blur(8px);
+  background:rgba(255,255,255,.75);
+
+  backdrop-filter:blur(12px);
+
+  border-radius:24px;
+
+  padding:20px;
+
+  box-shadow:var(--shadow);
+
+  margin-bottom:20px;
 }
 
 .topbar-row{
   display:flex;
-  flex-direction:column;
-  gap:10px;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
 }
 
 .title h2{
-  margin:0;
-  font-size: 18px;
-  letter-spacing: .2px;
-}
-.title p{
-  margin:6px 0 0;
-  font-size: 13px;
-  color: var(--muted);
+  font-size:28px;
+  margin-bottom:8px;
 }
 
-/* controls */
+.title p{
+  color:var(--muted);
+  font-size:14px;
+}
+
+.user-session{
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  background:#fff;
+
+  border-radius:18px;
+
+  padding:12px 16px;
+
+  box-shadow:var(--shadow);
+}
+
+.user-avatar{
+  width:48px;
+  height:48px;
+
+  border-radius:50%;
+
+  background:
+    linear-gradient(135deg,#2563eb,#1e3a8a);
+
+  color:#fff;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-weight:800;
+  font-size:20px;
+}
+
+.user-info{
+  display:flex;
+  flex-direction:column;
+}
+
+.user-info strong{
+  font-size:14px;
+}
+
+.user-info span{
+  font-size:12px;
+  color:var(--danger);
+  font-weight:700;
+}
+
+.logout-btn{
+  background:var(--danger);
+  color:#fff;
+  border:none;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.logout-btn:hover{
+  background:#b91c1c;
+}
+
 .controls{
   display:flex;
+  gap:12px;
   flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
+  margin-top:20px;
 }
 
 .search{
-  flex: 1;
-  min-width: 240px;
-  position: relative;
-}
-.search .icon{
-  position:absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity:.65;
-  font-size: 14px;
-}
-
-/* ✅ IMPORTANTE: checkbox/radio NÃO entram nessa regra */
-input:not([type="checkbox"]):not([type="radio"]),
-textarea,
-select{
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  font-size: 14px;
-  outline:none;
-  background: var(--surface);
-  color: var(--text);
-  transition: box-shadow .15s ease, border-color .15s ease, transform .05s ease;
+  flex:1;
+  position:relative;
 }
 
 .search input{
-  padding: 10px 12px 10px 36px;
+  padding-left:40px;
 }
 
-input::placeholder, textarea::placeholder{
-  color: color-mix(in srgb, var(--muted) 80%, transparent);
+.search .icon{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
 }
 
-input:focus, textarea:focus, select:focus{
-  border-color: rgba(31,111,178,.55);
-  box-shadow: var(--ring);
+input,
+textarea,
+select{
+  width:100%;
+
+  border:1px solid var(--border);
+
+  padding:12px;
+
+  border-radius:14px;
+
+  background:#fff;
+
+  font-size:14px;
+
+  outline:none;
 }
 
-input:focus-visible, textarea:focus-visible, select:focus-visible,
-button:focus-visible{
-  outline: none;
-  box-shadow: var(--ring);
+input:focus,
+textarea:focus,
+select:focus{
+  border-color:var(--primary);
 }
 
-/* remove setas do number (opcional) */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance: none; margin:0; }
-input[type="number"]{ -moz-appearance: textfield; }
+button{
+  border:none;
 
-/* ✅ checkbox/radio bonitos e visíveis */
-input[type="checkbox"],
-input[type="radio"]{
-  width: auto;
-  height: auto;
-  padding: 0;
-  accent-color: var(--primary);
-  cursor: pointer;
-}
+  padding:12px 16px;
 
-/* buttons */
-button, .btn{
-  width: auto;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text);
-  font-size: 14px;
+  border-radius:14px;
+
   cursor:pointer;
-  transition: transform .06s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
-  user-select: none;
+
+  font-weight:700;
+
+  transition:.2s;
 }
 
-button:hover, .btn:hover{
-  background: color-mix(in srgb, var(--surface-2) 60%, var(--surface) 40%);
-  box-shadow: 0 6px 16px rgba(2,6,23,.10);
-}
-button:active, .btn:active{ transform: translateY(1px); }
-
-button:disabled, .btn:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-  box-shadow:none;
-  transform:none;
+button:hover{
+  transform:translateY(-1px);
 }
 
 .btn-primary{
-  background: var(--primary);
-  border-color: color-mix(in srgb, var(--primary) 70%, #000 30%);
-  color: #fff;
-  font-weight: 700;
-}
-.btn-primary:hover{
-  background: var(--primary-dark);
-  border-color: var(--primary-dark);
+  background:
+    linear-gradient(135deg,#2563eb,#1d4ed8);
+
+  color:#fff;
 }
 
 .btn-neutral{
-  background: #374151;
-  border-color: #374151;
+  background:#374151;
   color:#fff;
-  font-weight: 700;
-}
-.btn-neutral:hover{
-  background: #1f2937;
-  border-color: #1f2937;
 }
 
 .btn-outline{
-  background: var(--surface);
+  background:#fff;
 }
 
-/* notices */
-.notice, .aviso-fixo{
-  background: var(--warning-soft);
-  border: 1px solid color-mix(in srgb, var(--warning) 22%, var(--border2));
-  color: var(--warning);
-  padding: 12px 14px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+.notice{
+  background:#fff8e7;
+
+  border-left:5px solid #f59e0b;
+
+  padding:14px 18px;
+
+  border-radius:16px;
+
+  margin-bottom:16px;
+
+  box-shadow:var(--shadow);
 }
 
-/* card */
 .card{
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow:hidden;
+  background:#fff;
+
+  border-radius:24px;
+
+  padding:20px;
+
+  box-shadow:var(--shadow);
+
+  margin-bottom:20px;
 }
 
-/* form */
 form{
-  padding:14px;
   display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:10px;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(240px,1fr));
+
+  gap:14px;
 }
 
 textarea{
-  grid-column: span 3;
-  resize: vertical;
-  min-height: 44px;
+  min-height:90px;
+  grid-column:1/-1;
 }
 
-form .full{ grid-column: span 3; }
+.full{
+  grid-column:1/-1;
+}
 
-/* ✅ linha do checkbox no form */
 .check-row{
-  grid-column: span 3;
   display:flex;
   align-items:center;
-  gap:10px;
-  padding: 10px 12px;
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--surface) 75%, var(--surface-2));
-}
-.check-row label{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  cursor:pointer;
-  font-size: 14px;
-  font-weight: 700;
-}
-.check-row small{
-  color: var(--muted);
-  font-weight: 500;
-}
+  gap:12px;
 
-/* table */
-.table-wrap{ overflow-x:auto; }
+  background:#f8fafc;
+
+  border-radius:14px;
+
+  padding:14px;
+}
 
 table{
   width:100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse:collapse;
 }
 
 thead th{
-  background: linear-gradient(180deg, #0f2f4a, #0b243a);
-  color: #fff;
-  padding: 10px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  border-bottom: 1px solid rgba(255,255,255,.12);
-  white-space: nowrap;
+  background:
+    linear-gradient(135deg,#1e3a8a,#2563eb);
+
+  color:#fff;
+
+  padding:14px;
+
+  font-size:12px;
+
+  text-transform:uppercase;
 }
 
 tbody td{
-  padding: 10px;
-  border-bottom: 1px solid var(--border2);
-  font-size: 13px;
-  vertical-align: top;
-  overflow-wrap:anywhere;
+  padding:14px;
+
+  border-bottom:1px solid #e5e7eb;
+
+  font-size:13px;
 }
 
-tbody tr:nth-child(even){ background: color-mix(in srgb, var(--surface) 92%, var(--surface-2)); }
-tbody tr:hover{ background: color-mix(in srgb, rgba(31,111,178,.10) 60%, var(--surface)); }
-
-/* prazo destaque por linha */
-.prazo-alerta{ background: rgba(245,158,11,.10) !important; }
-.prazo-encerrado{ background: rgba(220,38,38,.08) !important; }
-
-/* chips */
-.chip{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-weight: 800;
-  font-size: 12px;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  white-space: nowrap;
+tbody tr{
+  transition:.2s;
 }
 
-.chip-ok{ background: var(--ok-soft); border-color: rgba(22,101,52,.28); color: var(--ok); }
-.chip-warn{ background: var(--warning-soft); border-color: rgba(180,83,9,.28); color: var(--warning); }
-.chip-bad{ background: var(--danger-soft); border-color: rgba(185,28,28,.28); color: var(--danger); }
+tbody tr:hover{
+  background:#eff6ff;
+}
 
-/* actions */
 .actions-col{
   display:flex;
-  flex-direction: column;
-  gap:6px;
-  min-width: 120px;
+  flex-direction:column;
+  gap:8px;
 }
 
 .action-btn{
-  width:100%;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border:1px solid var(--border);
-  font-size: 13px;
-  font-weight: 800;
+  padding:8px 10px;
 }
 
 .editar{
-  background: rgba(31,111,178,.12);
-  border-color: rgba(31,111,178,.25);
-  color: color-mix(in srgb, var(--primary) 92%, #000 8%);
+  background:#dbeafe;
+  color:#1d4ed8;
 }
-.editar:hover{ background: rgba(31,111,178,.18); }
 
 .excluir{
-  background: rgba(185,28,28,.10);
-  border-color: rgba(185,28,28,.25);
-  color: var(--danger);
-}
-.excluir:hover{ background: rgba(185,28,28,.16); }
-
-/* ✅ checkbox na tabela alinhado */
-td input[type="checkbox"]{
-  vertical-align: middle;
+  background:#fee2e2;
+  color:#dc2626;
 }
 
-/* pagination */
+.chip{
+  padding:6px 10px;
+
+  border-radius:999px;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  display:inline-block;
+}
+
+.chip-ok{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.chip-warn{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.chip-bad{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
 .pager{
-  padding: 12px 14px;
-  border-top: 1px solid var(--border2);
-  background: color-mix(in srgb, var(--surface) 82%, var(--surface-2));
-  display:flex;
-  justify-content: space-between;
-  gap:10px;
-  flex-wrap: wrap;
-  align-items:center;
-}
+  margin-top:20px;
 
-.pager .left, .pager .right{
   display:flex;
-  gap:10px;
+  justify-content:space-between;
   align-items:center;
   flex-wrap:wrap;
+
+  gap:12px;
 }
 
-.pager .info{
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.pager .mini{
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-}
-.pager .mini:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-/* login */
 #loginModal{
   position:fixed;
   inset:0;
-  background: rgba(0, 0, 0, 0.55);
+
+  background:rgba(0,0,0,.5);
+
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 20px;
-  z-index: 50;
+
+  z-index:999;
 }
 
 #loginBox{
-  width: 340px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  box-shadow: var(--shadow);
+  width:360px;
+
+  background:#fff;
+
+  padding:30px;
+
+  border-radius:24px;
+
+  box-shadow:var(--shadow);
 }
+
 #loginBox h3{
-  margin: 0 0 8px;
-  font-size: 16px;
+  margin-bottom:10px;
+  font-size:24px;
 }
-#loginBox .hint{
-  margin: 0 0 12px;
-  color: var(--muted);
-  font-size: 13px;
+
+#loginBox p{
+  margin-bottom:20px;
+  color:var(--muted);
 }
+
 #loginBox input{
-  width:100%;
-  margin-bottom: 10px;
+  margin-bottom:12px;
 }
+
 #loginBox button{
   width:100%;
 }
 
-/* footer */
 footer{
   text-align:center;
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 10px;
+  margin-top:20px;
+  color:var(--muted);
+  font-size:13px;
 }
 
-/* responsive */
-@media (max-width: 900px){
-  form{ grid-template-columns: 1fr 1fr; }
-  textarea, form .full, .check-row{ grid-column: span 2; }
-}
+@media(max-width:768px){
 
-@media (max-width: 650px){
-  body{ padding:12px; }
-  .controls{ flex-direction: column; align-items: stretch; }
-  .search{ min-width: 100%; }
-  button, select{ width:100%; }
-  form{ grid-template-columns: 1fr; }
-  textarea, form .full, .check-row{ grid-column: span 1; }
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce){
-  *{ transition: none !important; scroll-behavior: auto !important; }
-}
-/* ====== APENAS DEIXAR MAIS CLARO (SEM MEXER NA LARGURA) ====== */
-
-/* Força tema claro (mesmo se o PC estiver em modo escuro) */
-:root{
-  --bg:#ffffff;
-  --surface:#ffffff;
-  --surface-2:#f8fafc;
-  --text:#111827;
-  --muted:#6b7280;
-  --border:#d1d5db;
-  --border2:#e5e7eb;
-
-  --shadow-sm: 0 4px 14px rgba(0,0,0,.06);
-  --shadow: 0 10px 26px rgba(0,0,0,.08);
-}
-
-/* Se existir dark-mode no CSS, neutraliza aqui */
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#ffffff;
-    --surface:#ffffff;
-    --surface-2:#f8fafc;
-    --text:#111827;
-    --muted:#6b7280;
-    --border:#d1d5db;
-    --border2:#e5e7eb;
+  .topbar-row{
+    flex-direction:column;
+    align-items:flex-start;
   }
+
+  .controls{
+    flex-direction:column;
+  }
+
 }
-
-/* Fundo branco (remove gradiente/escuro) */
-body{
-  background: #ffffff !important;
-}
-
-/* ✅ DESFAZ “alargamentos” que cortam a tela */
-.container{ max-width: 1200px !important; }     /* volta ao normal */
-table{ min-width: unset !important; }          /* remove min-width */
-th, td{ min-width: unset !important; }         /* remove min-width por coluna */
-.table-wrap{ overflow-x: auto; }               /* se precisar, rola só a tabela */
-
-/* Mantém texto legível e não cortado */
-tbody td{
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-
-
-
 
 </style>
 </head>
@@ -552,205 +460,517 @@ tbody td{
 <body>
 
 <!-- LOGIN -->
+
 <div id="loginModal">
+
   <div id="loginBox">
+
     <h3>Login</h3>
-    <p class="hint">Acesso restrito</p>
-    <input id="loginUser" placeholder="USUÁRIO" oninput="this.value=this.value.toUpperCase()">
-    <input id="loginPass" type="password" placeholder="SENHA">
-    <button class="btn btn-primary" onclick="login()">Entrar</button>
+
+    <p>Acesso restrito</p>
+
+    <input
+      id="loginUser"
+      placeholder="USUÁRIO"
+      oninput="this.value=this.value.toUpperCase()"
+    >
+
+    <input
+      id="loginPass"
+      type="password"
+      placeholder="SENHA"
+    >
+
+    <button
+      class="btn-primary"
+      onclick="login()"
+    >
+      Entrar
+    </button>
+
   </div>
+
 </div>
 
 <div class="container">
+
   <div class="topbar">
+
     <div class="topbar-row">
+
       <div class="title">
-        <h2>Acompanhar os Cadastros de Explorações Agropecuárias</h2>
+
+        <h2>
+          Acompanhar os Cadastros de Explorações Agropecuárias
+        </h2>
+
         <p>
-          <span id="contador">0</span> registro(s) •
-          <span id="contadorFiltrado">0</span> após filtro •
-          <span id="contadorExibido">0</span nesta página
+          <span id="contador">0</span> registro(s)
+          •
+          <span id="contadorFiltrado">0</span> filtrado(s)
+          •
+          <span id="contadorExibido">0</span> nesta página
         </p>
+
       </div>
 
-      <div class="controls">
-        <div class="search">
-          <span class="icon">🔎</span>
-          <input id="pesquisa" placeholder="Pesquisar por produtor, colônia, endereço, telefone, apelido, observações..." />
+      <div class="user-session">
+
+        <div
+          class="user-avatar"
+          id="userAvatar"
+        >
+          U
         </div>
 
-        <select id="filtroStatus" title="Filtro por status">
-          <option value="TODOS">Status: Todos</option>
-          <option value="EM_DIA">Status: Em dia</option>
-          <option value="ALERTA">Status: Alerta (≤10 dias)</option>
-          <option value="ENCERRADO">Status: Encerrado</option>
-        </select>
+        <div class="user-info">
 
-        <button class="btn btn-outline" onclick="limparFiltros()">Limpar</button>
-        <button class="btn btn-neutral" onclick="baixarExcel()">📊 Excel</button>
-        <button class="btn btn-neutral" onclick="baixarPDF()">📄 PDF</button>
+          <strong id="usuarioLogado">
+            USUÁRIO
+          </strong>
+
+          <span id="contadorSessao">
+            10:00
+          </span>
+
+        </div>
+
+        <button
+          class="logout-btn"
+          onclick="logout()"
+        >
+          Sair
+        </button>
+
       </div>
+
     </div>
+
+    <div class="controls">
+
+      <div class="search">
+
+        <span class="icon">🔎</span>
+
+        <input
+          id="pesquisa"
+          placeholder="Pesquisar..."
+        >
+
+      </div>
+
+      <select id="filtroStatus">
+
+        <option value="TODOS">
+          Status: Todos
+        </option>
+
+        <option value="EM_DIA">
+          Em dia
+        </option>
+
+        <option value="ALERTA">
+          Alerta
+        </option>
+
+        <option value="ENCERRADO">
+          Encerrado
+        </option>
+
+      </select>
+
+      <button
+        class="btn-outline"
+        onclick="limparFiltros()"
+      >
+        Limpar
+      </button>
+
+      <button
+        class="btn-neutral"
+        onclick="baixarExcel()"
+      >
+        📊 Excel
+      </button>
+
+      <button
+        class="btn-neutral"
+        onclick="baixarPDF()"
+      >
+        📄 PDF
+      </button>
+
+    </div>
+
   </div>
 
-  <div class="notice">⚠️ Aviso: o prazo inicial é de 30 dias, com possibilidade de prorrogação por mais 30 dias!</div>
-  <div class="notice">⚠️ Aviso: depois da abertura do cadastro no SISDAF, clicar em excluir!</div>
+  <div class="notice">
+    ⚠️ Prazo inicial de 30 dias com prorrogação de mais 30 dias.
+  </div>
+
+  <div class="notice">
+    ⚠️ Após abertura no SISDAF clicar em excluir.
+  </div>
 
   <div class="card">
-    <form id="form">
-      <input id="nome" placeholder="PROPRIETÁRIO" required oninput="this.value=this.value.toUpperCase()">
-      <input id="propriedade" placeholder="NOME DA COLÔNIA" required oninput="this.value=this.value.toUpperCase()">
-      <input id="endereco" placeholder="ENDEREÇO" oninput="this.value=this.value.toUpperCase()">
-      <input id="telefone" placeholder="TELEFONE" type="number">
-      <input id="apelido" placeholder="APELIDO" oninput="this.value=this.value.toUpperCase()">
-      <input id="data" type="date" required>
 
-      <!-- ✅ CAIXINHA (voltou) -->
+    <form id="form">
+
+      <input
+        id="nome"
+        placeholder="PROPRIETÁRIO"
+        required
+        oninput="this.value=this.value.toUpperCase()"
+      >
+
+      <input
+        id="propriedade"
+        placeholder="NOME DA COLÔNIA"
+        required
+        oninput="this.value=this.value.toUpperCase()"
+      >
+
+      <input
+        id="endereco"
+        placeholder="ENDEREÇO"
+        oninput="this.value=this.value.toUpperCase()"
+      >
+
+      <input
+        id="telefone"
+        placeholder="TELEFONE"
+      >
+
+      <input
+        id="apelido"
+        placeholder="APELIDO"
+        oninput="this.value=this.value.toUpperCase()"
+      >
+
+      <input
+        id="data"
+        type="date"
+        required
+      >
+
       <div class="check-row">
+
         <label>
-          <input id="aberto" type="checkbox" />
+
+          <input
+            id="aberto"
+            type="checkbox"
+          >
+
           ABERTO NO SISDAF?
+
         </label>
-        <small>Marque quando o cadastro já tiver sido aberto no sistema.</small>
+
       </div>
 
-      <textarea id="obs" placeholder="OBSERVAÇÕES" oninput="this.value=this.value.toUpperCase()"></textarea>
-      <button class="btn btn-primary full" type="submit">💾 SALVAR</button>
+      <textarea
+        id="obs"
+        placeholder="OBSERVAÇÕES"
+        oninput="this.value=this.value.toUpperCase()"
+      ></textarea>
+
+      <button
+        class="btn-primary full"
+        type="submit"
+      >
+        💾 SALVAR
+      </button>
+
     </form>
+
   </div>
 
-  <div class="card table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Produtor</th>
-          <th>Propriedade</th>
-          <th>Endereço</th>
-          <th>Telefone</th>
-          <th>Data</th>
-          <th>Aberto SISDAF</th>
-          <th>Observações</th>
-          <th>Apelido</th>
-          <th>Prazo</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="lista"></tbody>
-    </table>
+  <div class="card">
+
+    <div style="overflow:auto;">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Produtor</th>
+            <th>Propriedade</th>
+            <th>Endereço</th>
+            <th>Telefone</th>
+            <th>Data</th>
+            <th>SISDAF</th>
+            <th>Obs</th>
+            <th>Apelido</th>
+            <th>Prazo</th>
+            <th>Ações</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="lista"></tbody>
+
+      </table>
+
+    </div>
 
     <div class="pager">
-      <div class="left">
-        <button id="prevBtn" class="mini" onclick="paginaAnterior()">◀ Anterior</button>
-        <button id="nextBtn" class="mini" onclick="proximaPagina()">Próxima ▶</button>
-        <span class="info" id="pageInfo">Página 1</span>
+
+      <div>
+
+        <button onclick="paginaAnterior()">
+          ◀ Anterior
+        </button>
+
+        <button onclick="proximaPagina()">
+          Próxima ▶
+        </button>
+
       </div>
 
-      <div class="right">
-        <span class="info">Itens por página:</span>
-        <select id="pageSize">
-          <option value="10">10</option>
-          <option value="20" selected>20</option>
-          <option value="30">30</option>
-          <option value="50">50</option>
-        </select>
+      <div>
+
+        <span id="pageInfo">
+          Página 1
+        </span>
+
       </div>
+
     </div>
+
   </div>
 
-  <footer>© Todos os direitos reservados 2025</footer>
+  <footer>
+    © Todos os direitos reservados 2026
+    Atualizando 25/05/2026 por Antonio Rodrigo Pires Santiago 
+  </footer>
+
 </div>
 
 <script>
-// 🔐 LOGIN LOCAL (robusto)
-const usuarios = { RODRIGO:'maria', JANIEL:'1234', CASSIA:'1234', MARCOS:'1234', RAIMUNDA:'1234', ADMIN:'admin' };
+
+// LOGIN
+
+const usuarios = {
+
+  RODRIGO:'maria',
+  JANIEL:'1234',
+  CASSIA:'1234',
+  MARCOS:'1234',
+  RAIMUNDA:'1234',
+  ADMIN:'admin',
+  SAMARA:'1234'
+
+};
+
+let tempoSessao = 600;
+
+let timerSessao = null;
 
 function login(){
-  const userEl = document.getElementById("loginUser");
-  const passEl = document.getElementById("loginPass");
 
-  const user = (userEl.value || "").trim().toUpperCase();
-  const pass = (passEl.value || "").trim();
+  const user =
+    loginUser.value.trim().toUpperCase();
 
-  if (!usuarios[user] || usuarios[user] !== pass) {
+  const pass =
+    loginPass.value.trim();
+
+  if(!usuarios[user]
+    || usuarios[user] !== pass){
+
     alert("Login inválido");
+
     return;
   }
 
-  document.getElementById("loginModal").style.display = "none";
+  usuarioLogado.textContent = user;
+
+  userAvatar.textContent =
+    user.charAt(0);
+
+  loginModal.style.display = "none";
+
+  iniciarSessao();
 }
 
-document.addEventListener("keydown", (e) => {
-  const modal = document.getElementById("loginModal");
-  if (e.key === "Enter" && modal && modal.style.display !== "none") {
+function logout(){
+
+  clearInterval(timerSessao);
+
+  tempoSessao = 600;
+
+  loginPass.value = "";
+
+  loginModal.style.display = "flex";
+}
+
+function iniciarSessao(){
+
+  atualizarTempo();
+
+  timerSessao = setInterval(() => {
+
+    tempoSessao--;
+
+    atualizarTempo();
+
+    if(tempoSessao <= 0){
+
+      clearInterval(timerSessao);
+
+      alert("Sessão expirada!");
+
+      logout();
+    }
+
+  },1000);
+}
+
+function atualizarTempo(){
+
+  const min =
+    String(Math.floor(tempoSessao/60))
+    .padStart(2,'0');
+
+  const seg =
+    String(tempoSessao%60)
+    .padStart(2,'0');
+
+  contadorSessao.textContent =
+    `${min}:${seg}`;
+}
+
+document.addEventListener("keydown",(e)=>{
+
+  if(e.key==="Enter"
+    && loginModal.style.display !== "none"){
+
     login();
   }
+
 });
 
-// 🔑 SUPABASE (NÃO MEXIDO)
-const supabaseClient = window.supabase.createClient(
- "https://ykqfmgpppvafakcjiicy.supabase.co",
- "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrcWZtZ3BwcHZhZmFrY2ppaWN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTY0OTEsImV4cCI6MjA4MTc3MjQ5MX0.6iU1kae3XJwJw6l-0Cd7bRarImHWhGbDMAVgUDwdmKo"
+// SUPABASE
+
+const supabaseClient =
+window.supabase.createClient(
+
+"https://ykqfmgpppvafakcjiicy.supabase.co",
+
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrcWZtZ3BwcHZhZmFrY2ppaWN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTY0OTEsImV4cCI6MjA4MTc3MjQ5MX0.6iU1kae3XJwJw6l-0Cd7bRarImHWhGbDMAVgUDwdmKo"
+
 );
 
 let editId = null;
+
 let todos = [];
+
 let currentPage = 1;
 
-const pesquisaInput = document.getElementById("pesquisa");
-const filtroStatus = document.getElementById("filtroStatus");
-const pageSizeEl = document.getElementById("pageSize");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-const pageInfo = document.getElementById("pageInfo");
+const pesquisaInput =
+document.getElementById("pesquisa");
 
-pesquisaInput.addEventListener("input", () => { currentPage = 1; renderTabela(); });
-filtroStatus.addEventListener("change", () => { currentPage = 1; renderTabela(); });
-pageSizeEl.addEventListener("change", () => { currentPage = 1; renderTabela(); });
+const filtroStatus =
+document.getElementById("filtroStatus");
 
-function norm(v){ return String(v ?? "").toUpperCase().trim(); }
+function norm(v){
+  return String(v ?? "")
+  .toUpperCase()
+  .trim();
+}
 
 function diasRestantes(dataAbertura){
-  const inicio = new Date(dataAbertura);
-  const fim = new Date(inicio.getTime() + (60*24*60*60*1000));
-  const agora = new Date();
-  const diff = fim - agora;
-  return Math.floor(diff / (1000*60*60*24));
+
+  const inicio =
+    new Date(dataAbertura);
+
+  const fim =
+    new Date(
+      inicio.getTime()
+      + (60*24*60*60*1000)
+    );
+
+  const agora =
+    new Date();
+
+  return Math.floor(
+    (fim - agora)
+    /
+    (1000*60*60*24)
+  );
+}
+
+function calcularPrazo(data){
+
+  const dias =
+    diasRestantes(data);
+
+  if(dias < 0){
+
+    return `
+      <span class="chip chip-bad">
+        ⛔ ENCERRADO
+      </span>
+    `;
+  }
+
+  if(dias <= 10){
+
+    return `
+      <span class="chip chip-warn">
+        ⚠️ ${dias} dias
+      </span>
+    `;
+  }
+
+  return `
+    <span class="chip chip-ok">
+      ✅ ${dias} dias
+    </span>
+  `;
 }
 
 function getStatus(c){
-  const dias = diasRestantes(c.data_abertura);
-  if (dias < 0) return "ENCERRADO";
-  if (dias <= 10) return "ALERTA";
+
+  const dias =
+    diasRestantes(c.data_abertura);
+
+  if(dias < 0)
+    return "ENCERRADO";
+
+  if(dias <= 10)
+    return "ALERTA";
+
   return "EM_DIA";
 }
 
-function calcularPrazo(dataAbertura){
-  const dias = diasRestantes(dataAbertura);
-  if(dias < 0) return "<span class='chip chip-bad'>⛔ ENCERRADO</span>";
-  if(dias <= 10) return `<span class='chip chip-warn'>⚠️ ${dias} dias</span>`;
-  return `<span class='chip chip-ok'>✅ ${dias} dias</span>`;
-}
-
-function classePrazo(dataAbertura){
-  const dias = diasRestantes(dataAbertura);
-  if(dias < 0) return "prazo-encerrado";
-  if(dias <= 10) return "prazo-alerta";
-  return "";
-}
-
 function filtrarLista(lista){
-  const q = norm(pesquisaInput.value);
-  const st = filtroStatus.value;
+
+  const q =
+    norm(pesquisaInput.value);
+
+  const st =
+    filtroStatus.value;
 
   return lista.filter(c => {
-    if (st !== "TODOS" && getStatus(c) !== st) return false;
-    if(!q) return true;
+
+    if(st !== "TODOS"
+      && getStatus(c) !== st){
+
+      return false;
+    }
 
     const campos = [
-      c.nome, c.propriedade, c.endereco, c.telefone,
-      c.apelido, c.observacoes, c.data_abertura,
-      (c.aberto_sisdaf ? "SIM" : "NAO")
+
+      c.nome,
+      c.propriedade,
+      c.endereco,
+      c.telefone,
+      c.apelido,
+      c.observacoes
+
     ].map(norm).join(" ");
 
     return campos.includes(q);
@@ -758,217 +978,331 @@ function filtrarLista(lista){
 }
 
 function limparFiltros(){
+
   pesquisaInput.value = "";
+
   filtroStatus.value = "TODOS";
-  pageSizeEl.value = "20";
-  currentPage = 1;
+
   renderTabela();
 }
 
-function atualizarContadores(total, filtrado, exibido){
-  document.getElementById("contador").textContent = total;
-  document.getElementById("contadorFiltrado").textContent = filtrado;
-  document.getElementById("contadorExibido").textContent = exibido;
-}
-
-function totalPaginas(totalItens){
-  const size = Number(pageSizeEl.value);
-  return Math.max(1, Math.ceil(totalItens / size));
-}
-
-function paginaAnterior(){
-  if(currentPage > 1){
-    currentPage--;
-    renderTabela();
-  }
-}
-
-function proximaPagina(){
-  const filtrados = filtrarLista(todos);
-  const tp = totalPaginas(filtrados.length);
-  if(currentPage < tp){
-    currentPage++;
-    renderTabela();
-  }
-}
-
-// 🔄 CARREGAR (Supabase igual)
 async function carregar(){
-  const { data } = await supabaseClient
+
+  const { data } =
+    await supabaseClient
+
     .from("cadastros_idaf")
+
     .select("*")
+
     .order("id");
 
   todos = data || [];
+
   renderTabela();
 }
 
-/* ✅ Atualiza o checkbox direto na tabela */
 async function atualizarAberto(id, checked){
-  const { error } = await supabaseClient
-    .from("cadastros_idaf")
-    .update({ aberto_sisdaf: !!checked })
-    .eq("id", id);
 
-  if(error){
-    alert("Não foi possível atualizar a caixinha (verifique se existe a coluna 'aberto_sisdaf' no Supabase).");
-    carregar();
-  } else {
-    // atualiza local sem precisar recarregar tudo
-    const item = todos.find(x => x.id === id);
-    if(item) item.aberto_sisdaf = !!checked;
-  }
+  await supabaseClient
+
+  .from("cadastros_idaf")
+
+  .update({
+
+    aberto_sisdaf: !!checked
+
+  })
+
+  .eq("id", id);
 }
 
 function renderTabela(){
-  const listaEl = document.getElementById("lista");
-  const filtrados = filtrarLista(todos);
 
-  const size = Number(pageSizeEl.value);
-  const tp = totalPaginas(filtrados.length);
-  if(currentPage > tp) currentPage = tp;
+  const listaEl =
+    document.getElementById("lista");
 
-  const start = (currentPage - 1) * size;
-  const pageItems = filtrados.slice(start, start + size);
+  const filtrados =
+    filtrarLista(todos);
 
-  atualizarContadores(todos.length, filtrados.length, pageItems.length);
+  contador.textContent =
+    todos.length;
 
-  pageInfo.textContent = `Página ${currentPage} de ${tp}`;
-  prevBtn.disabled = currentPage <= 1;
-  nextBtn.disabled = currentPage >= tp;
+  contadorFiltrado.textContent =
+    filtrados.length;
+
+  contadorExibido.textContent =
+    filtrados.length;
 
   listaEl.innerHTML = "";
-  pageItems.forEach(c => {
-    const checked = c.aberto_sisdaf ? "checked" : "";
+
+  filtrados.forEach(c => {
+
     listaEl.innerHTML += `
-      <tr class="${classePrazo(c.data_abertura)}">
+
+      <tr>
+
         <td>${c.nome ?? ""}</td>
+
         <td>${c.propriedade ?? ""}</td>
+
         <td>${c.endereco ?? ""}</td>
+
         <td>${c.telefone ?? ""}</td>
+
         <td>${c.data_abertura ?? ""}</td>
+
         <td>
-          <input type="checkbox" ${checked}
-                 onchange="atualizarAberto(${c.id}, this.checked)">
+
+          <input
+            type="checkbox"
+
+            ${c.aberto_sisdaf
+              ? "checked"
+              : ""
+            }
+
+            onchange="
+              atualizarAberto(
+                ${c.id},
+                this.checked
+              )
+            "
+          >
+
         </td>
+
         <td>${c.observacoes ?? ""}</td>
+
         <td>${c.apelido ?? ""}</td>
-        <td>${calcularPrazo(c.data_abertura)}</td>
+
         <td>
-          <div class="actions-col">
-            <button class="action-btn editar" onclick="editar(${c.id})">Editar</button>
-            <button class="action-btn excluir" onclick="excluir(${c.id})">Excluir</button>
-          </div>
+          ${calcularPrazo(c.data_abertura)}
         </td>
+
+        <td>
+
+          <div class="actions-col">
+
+            <button
+              class="action-btn editar"
+              onclick="editar(${c.id})"
+            >
+              Editar
+            </button>
+
+            <button
+              class="action-btn excluir"
+              onclick="excluir(${c.id})"
+            >
+              Excluir
+            </button>
+
+          </div>
+
+        </td>
+
       </tr>
+
     `;
   });
 }
 
-// 💾 SALVAR (Supabase igual + campo do checkbox)
-form.onsubmit = async e =>{
- e.preventDefault();
- const dados={
-  propriedade:propriedade.value,
-  nome:nome.value,
-  endereco:endereco.value,
-  telefone:telefone.value,
-  data_abertura:data.value,
-  observacoes:obs.value,
-  apelido:apelido.value,
-  aberto_sisdaf: !!document.getElementById("aberto").checked
- };
- editId
- ? await supabaseClient.from("cadastros_idaf").update(dados).eq("id",editId)
- : await supabaseClient.from("cadastros_idaf").insert([dados]);
+form.onsubmit = async e => {
 
- editId=null;
- form.reset();
- document.getElementById("aberto").checked = false;
- carregar();
+  e.preventDefault();
+
+  const dados = {
+
+    propriedade:
+      propriedade.value,
+
+    nome:
+      nome.value,
+
+    endereco:
+      endereco.value,
+
+    telefone:
+      telefone.value,
+
+    data_abertura:
+      data.value,
+
+    observacoes:
+      obs.value,
+
+    apelido:
+      apelido.value,
+
+    aberto_sisdaf:
+      aberto.checked
+
+  };
+
+  if(editId){
+
+    await supabaseClient
+
+    .from("cadastros_idaf")
+
+    .update(dados)
+
+    .eq("id", editId);
+
+  }else{
+
+    await supabaseClient
+
+    .from("cadastros_idaf")
+
+    .insert([dados]);
+  }
+
+  form.reset();
+
+  editId = null;
+
+  carregar();
 };
 
-// ✏️ EDITAR (Supabase igual + checkbox)
 async function editar(id){
- const {data}=await supabaseClient.from("cadastros_idaf").select("*").eq("id",id).single();
- nome.value=data.nome;
- propriedade.value=data.propriedade;
- endereco.value=data.endereco;
- telefone.value=data.telefone;
- data.value=data.data_abertura;
- obs.value=data.observacoes;
- apelido.value=data.apelido;
- document.getElementById("aberto").checked = !!data.aberto_sisdaf;
- editId=id;
- window.scrollTo({ top: 0, behavior: "smooth" });
+
+  const { data } =
+
+  await supabaseClient
+
+  .from("cadastros_idaf")
+
+  .select("*")
+
+  .eq("id", id)
+
+  .single();
+
+  nome.value =
+    data.nome;
+
+  propriedade.value =
+    data.propriedade;
+
+  endereco.value =
+    data.endereco;
+
+  telefone.value =
+    data.telefone;
+
+  obs.value =
+    data.observacoes;
+
+  apelido.value =
+    data.apelido;
+
+  aberto.checked =
+    data.aberto_sisdaf;
+
+  editId = id;
+
+  window.scrollTo({
+
+    top:0,
+
+    behavior:"smooth"
+
+  });
 }
 
-// ❌ EXCLUIR (Supabase igual)
 async function excluir(id){
- if(confirm("Excluir registro?")){
-  await supabaseClient.from("cadastros_idaf").delete().eq("id",id);
-  carregar();
- }
+
+  if(confirm("Excluir registro?")){
+
+    await supabaseClient
+
+    .from("cadastros_idaf")
+
+    .delete()
+
+    .eq("id", id);
+
+    carregar();
+  }
 }
 
-// 📊 EXCEL
+function paginaAnterior(){}
+
+function proximaPagina(){}
+
 function baixarExcel(){
- const wb=XLSX.utils.book_new();
- const ws=XLSX.utils.table_to_sheet(document.querySelector("table"));
- XLSX.utils.book_append_sheet(wb,ws,"IDAF");
- XLSX.writeFile(wb,"cadastros_idaf.xlsx");
+
+  const wb =
+    XLSX.utils.book_new();
+
+  const ws =
+    XLSX.utils.table_to_sheet(
+      document.querySelector("table")
+    );
+
+  XLSX.utils.book_append_sheet(
+    wb,
+    ws,
+    "IDAF"
+  );
+
+  XLSX.writeFile(
+    wb,
+    "cadastros_idaf.xlsx"
+  );
 }
 
-// 📄 PDF (inclui a coluna "Aberto SISDAF")
 function baixarPDF(){
-  const registros = filtrarLista(todos);
 
-  const pdf = new jspdf.jsPDF("landscape");
-  pdf.setFontSize(14);
-  pdf.text("Relatório IDAF", 14, 14);
+  const pdf =
+    new jspdf.jsPDF("landscape");
 
-  pdf.setFontSize(10);
-  pdf.text(`Total de registros: ${registros.length}`, 14, 20);
+  pdf.text(
+    "Relatório IDAF",
+    14,
+    14
+  );
 
-  const head = [[
-    "Produtor","Propriedade","Endereço","Telefone","Data","Aberto SISDAF","Observações","Apelido","Prazo"
-  ]];
+  const body =
+    filtrarLista(todos)
+    .map(c => [
 
-  const body = registros.map(c => {
-    const dias = diasRestantes(c.data_abertura);
-    const prazo = (dias < 0) ? "ENCERRADO" : `${dias} dias`;
-    const aberto = c.aberto_sisdaf ? "SIM" : "NÃO";
-
-    return [
       c.nome || "",
       c.propriedade || "",
       c.endereco || "",
       c.telefone || "",
       c.data_abertura || "",
-      aberto,
+      c.aberto_sisdaf ? "SIM" : "NÃO",
       c.observacoes || "",
-      c.apelido || "",
-      prazo
-    ];
-  });
+      c.apelido || ""
+
+    ]);
 
   pdf.autoTable({
-    head,
+
+    head:[[
+      "Produtor",
+      "Propriedade",
+      "Endereço",
+      "Telefone",
+      "Data",
+      "SISDAF",
+      "Obs",
+      "Apelido"
+    ]],
+
     body,
-    startY: 24,
-    styles: { fontSize: 8, cellPadding: 2, overflow: "linebreak", valign: "top" },
-    headStyles: { fillColor: [40,120,180], textColor: 255, fontSize: 9 },
-    columnStyles: {
-      0:{cellWidth:30}, 1:{cellWidth:30}, 2:{cellWidth:32}, 3:{cellWidth:22},
-      4:{cellWidth:18}, 5:{cellWidth:20}, 6:{cellWidth:62}, 7:{cellWidth:22}, 8:{cellWidth:16}
-    },
-    margin: { left: 10, right: 10 }
+
+    startY:20
   });
 
   pdf.save("cadastros_idaf.pdf");
 }
 
 carregar();
+
 </script>
 
 </body>
