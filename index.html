@@ -2,49 +2,35 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <title>Cadastro IDAF</title>
 
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- EXCEL / PDF -->
+<!-- EXCEL -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+<!-- PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
 <style>
 
 :root{
-  --bg:#f5f7fb;
-  --surface:#ffffff;
-  --surface-2:#f8fafc;
-
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --primary:#2563eb;
+  --primary2:#1d4ed8;
+  --danger:#dc2626;
+  --success:#16a34a;
+  --warning:#f59e0b;
   --text:#111827;
   --muted:#6b7280;
-
-  --border:#dbe3ef;
-
-  --primary:#2563eb;
-  --primary-dark:#1d4ed8;
-
-  --danger:#dc2626;
-  --warning:#f59e0b;
-  --success:#16a34a;
-
+  --border:#dbe4ee;
   --radius:18px;
-
-  --shadow:
-    0 10px 30px rgba(0,0,0,.06);
-
-  --font:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    sans-serif;
+  --shadow:0 10px 30px rgba(0,0,0,.06);
 }
 
 *{
@@ -54,13 +40,10 @@
 }
 
 body{
-  font-family:var(--font);
-  background:
-    linear-gradient(135deg,#eff6ff,#f8fafc);
-
-  color:var(--text);
-
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#eff6ff,#f8fafc);
   padding:20px;
+  color:var(--text);
 }
 
 .container{
@@ -69,16 +52,11 @@ body{
 }
 
 .topbar{
-  background:rgba(255,255,255,.75);
-
+  background:rgba(255,255,255,.8);
   backdrop-filter:blur(12px);
-
-  border-radius:24px;
-
   padding:20px;
-
+  border-radius:24px;
   box-shadow:var(--shadow);
-
   margin-bottom:20px;
 }
 
@@ -86,8 +64,8 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:20px;
   flex-wrap:wrap;
+  gap:20px;
 }
 
 .title h2{
@@ -104,32 +82,22 @@ body{
   display:flex;
   align-items:center;
   gap:12px;
-
   background:#fff;
-
-  border-radius:18px;
-
   padding:12px 16px;
-
+  border-radius:18px;
   box-shadow:var(--shadow);
 }
 
 .user-avatar{
-  width:48px;
-  height:48px;
-
+  width:46px;
+  height:46px;
   border-radius:50%;
-
-  background:
-    linear-gradient(135deg,#2563eb,#1e3a8a);
-
+  background:linear-gradient(135deg,#2563eb,#1e3a8a);
   color:#fff;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
-  font-weight:800;
+  font-weight:bold;
   font-size:20px;
 }
 
@@ -143,9 +111,9 @@ body{
 }
 
 .user-info span{
-  font-size:12px;
   color:var(--danger);
-  font-weight:700;
+  font-size:12px;
+  font-weight:bold;
 }
 
 .logout-btn{
@@ -155,18 +123,14 @@ body{
   padding:10px 14px;
   border-radius:12px;
   cursor:pointer;
-  font-weight:700;
-}
-
-.logout-btn:hover{
-  background:#b91c1c;
+  font-weight:bold;
 }
 
 .controls{
   display:flex;
   gap:12px;
-  flex-wrap:wrap;
   margin-top:20px;
+  flex-wrap:wrap;
 }
 
 .search{
@@ -174,33 +138,26 @@ body{
   position:relative;
 }
 
-.search input{
-  padding-left:40px;
-}
-
 .search .icon{
   position:absolute;
-  left:14px;
+  left:12px;
   top:50%;
   transform:translateY(-50%);
+}
+
+.search input{
+  padding-left:38px;
 }
 
 input,
 textarea,
 select{
   width:100%;
-
-  border:1px solid var(--border);
-
   padding:12px;
-
   border-radius:14px;
-
-  background:#fff;
-
-  font-size:14px;
-
+  border:1px solid var(--border);
   outline:none;
+  font-size:14px;
 }
 
 input:focus,
@@ -211,15 +168,10 @@ select:focus{
 
 button{
   border:none;
-
   padding:12px 16px;
-
   border-radius:14px;
-
   cursor:pointer;
-
-  font-weight:700;
-
+  font-weight:bold;
   transition:.2s;
 }
 
@@ -228,9 +180,7 @@ button:hover{
 }
 
 .btn-primary{
-  background:
-    linear-gradient(135deg,#2563eb,#1d4ed8);
-
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
   color:#fff;
 }
 
@@ -245,42 +195,30 @@ button:hover{
 
 .notice{
   background:#fff8e7;
-
-  border-left:5px solid #f59e0b;
-
+  border-left:5px solid var(--warning);
   padding:14px 18px;
-
   border-radius:16px;
-
   margin-bottom:16px;
-
   box-shadow:var(--shadow);
 }
 
 .card{
   background:#fff;
-
-  border-radius:24px;
-
   padding:20px;
-
+  border-radius:24px;
   box-shadow:var(--shadow);
-
   margin-bottom:20px;
 }
 
 form{
   display:grid;
-
-  grid-template-columns:
-    repeat(auto-fit,minmax(240px,1fr));
-
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
   gap:14px;
 }
 
 textarea{
-  min-height:90px;
   grid-column:1/-1;
+  min-height:90px;
 }
 
 .full{
@@ -290,13 +228,14 @@ textarea{
 .check-row{
   display:flex;
   align-items:center;
-  gap:12px;
-
+  gap:10px;
   background:#f8fafc;
-
-  border-radius:14px;
-
   padding:14px;
+  border-radius:14px;
+}
+
+.table-wrap{
+  overflow:auto;
 }
 
 table{
@@ -305,28 +244,16 @@ table{
 }
 
 thead th{
-  background:
-    linear-gradient(135deg,#1e3a8a,#2563eb);
-
+  background:linear-gradient(135deg,#1e3a8a,#2563eb);
   color:#fff;
-
   padding:14px;
-
   font-size:12px;
-
-  text-transform:uppercase;
 }
 
 tbody td{
   padding:14px;
-
   border-bottom:1px solid #e5e7eb;
-
   font-size:13px;
-}
-
-tbody tr{
-  transition:.2s;
 }
 
 tbody tr:hover{
@@ -337,10 +264,6 @@ tbody tr:hover{
   display:flex;
   flex-direction:column;
   gap:8px;
-}
-
-.action-btn{
-  padding:8px 10px;
 }
 
 .editar{
@@ -355,13 +278,9 @@ tbody tr:hover{
 
 .chip{
   padding:6px 10px;
-
   border-radius:999px;
-
   font-size:12px;
-
-  font-weight:800;
-
+  font-weight:bold;
   display:inline-block;
 }
 
@@ -380,45 +299,27 @@ tbody tr:hover{
   color:#991b1b;
 }
 
-.pager{
-  margin-top:20px;
-
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-
-  gap:12px;
-}
-
 #loginModal{
   position:fixed;
   inset:0;
-
   background:rgba(0,0,0,.5);
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   z-index:999;
 }
 
 #loginBox{
-  width:360px;
-
+  width:350px;
   background:#fff;
-
   padding:30px;
-
   border-radius:24px;
-
   box-shadow:var(--shadow);
 }
 
 #loginBox h3{
-  margin-bottom:10px;
   font-size:24px;
+  margin-bottom:10px;
 }
 
 #loginBox p{
@@ -438,7 +339,6 @@ footer{
   text-align:center;
   margin-top:20px;
   color:var(--muted);
-  font-size:13px;
 }
 
 @media(max-width:768px){
@@ -505,21 +405,15 @@ footer{
         </h2>
 
         <p>
-          <span id="contador">0</span> registro(s)
-          •
-          <span id="contadorFiltrado">0</span> filtrado(s)
-          •
-          <span id="contadorExibido">0</span> nesta página
+          <span id="contador">0</span> registros •
+          <span id="contadorFiltrado">0</span> filtrados
         </p>
 
       </div>
 
       <div class="user-session">
 
-        <div
-          class="user-avatar"
-          id="userAvatar"
-        >
+        <div class="user-avatar" id="userAvatar">
           U
         </div>
 
@@ -554,28 +448,17 @@ footer{
 
         <input
           id="pesquisa"
-          placeholder="Pesquisar..."
+          placeholder="Pesquisar produtor, colônia, telefone..."
         >
 
       </div>
 
       <select id="filtroStatus">
 
-        <option value="TODOS">
-          Status: Todos
-        </option>
-
-        <option value="EM_DIA">
-          Em dia
-        </option>
-
-        <option value="ALERTA">
-          Alerta
-        </option>
-
-        <option value="ENCERRADO">
-          Encerrado
-        </option>
+        <option value="TODOS">Todos</option>
+        <option value="EM_DIA">Em dia</option>
+        <option value="ALERTA">Alerta</option>
+        <option value="ENCERRADO">Encerrado</option>
 
       </select>
 
@@ -605,7 +488,7 @@ footer{
   </div>
 
   <div class="notice">
-    ⚠️ Prazo inicial de 30 dias com prorrogação de mais 30 dias.
+    ⚠️ Prazo inicial é de 30 dias com prorrogação de mais 30 dias.
   </div>
 
   <div class="notice">
@@ -685,66 +568,38 @@ footer{
 
   </div>
 
-  <div class="card">
+  <div class="card table-wrap">
 
-    <div style="overflow:auto;">
+    <table>
 
-      <table>
+      <thead>
 
-        <thead>
+        <tr>
 
-          <tr>
+          <th>Produtor</th>
+          <th>Propriedade</th>
+          <th>Endereço</th>
+          <th>Telefone</th>
+          <th>Data</th>
+          <th>SISDAF</th>
+          <th>Observações</th>
+          <th>Apelido</th>
+          <th>Prazo</th>
+          <th>Ações</th>
 
-            <th>Produtor</th>
-            <th>Propriedade</th>
-            <th>Endereço</th>
-            <th>Telefone</th>
-            <th>Data</th>
-            <th>SISDAF</th>
-            <th>Obs</th>
-            <th>Apelido</th>
-            <th>Prazo</th>
-            <th>Ações</th>
+        </tr>
 
-          </tr>
+      </thead>
 
-        </thead>
+      <tbody id="lista"></tbody>
 
-        <tbody id="lista"></tbody>
-
-      </table>
-
-    </div>
-
-    <div class="pager">
-
-      <div>
-
-        <button onclick="paginaAnterior()">
-          ◀ Anterior
-        </button>
-
-        <button onclick="proximaPagina()">
-          Próxima ▶
-        </button>
-
-      </div>
-
-      <div>
-
-        <span id="pageInfo">
-          Página 1
-        </span>
-
-      </div>
-
-    </div>
+    </table>
 
   </div>
 
   <footer>
     © Todos os direitos reservados 2026
-    Atualizando 25/05/2026 por Antonio Rodrigo Pires Santiago 
+    Atualizando em 25/05/2026 por Antonio Rodrigo Pires Santiago
   </footer>
 
 </div>
@@ -766,7 +621,6 @@ const usuarios = {
 };
 
 let tempoSessao = 600;
-
 let timerSessao = null;
 
 function login(){
@@ -781,7 +635,6 @@ function login(){
     || usuarios[user] !== pass){
 
     alert("Login inválido");
-
     return;
   }
 
@@ -818,9 +671,7 @@ function iniciarSessao(){
 
     if(tempoSessao <= 0){
 
-      clearInterval(timerSessao);
-
-      alert("Sessão expirada!");
+      alert("Sessão expirada");
 
       logout();
     }
@@ -842,11 +693,15 @@ function atualizarTempo(){
     `${min}:${seg}`;
 }
 
+// ENTER LOGIN
+
 document.addEventListener("keydown",(e)=>{
 
-  if(e.key==="Enter"
-    && loginModal.style.display !== "none"){
-
+  if(
+    e.key === "Enter"
+    &&
+    loginModal.style.display !== "none"
+  ){
     login();
   }
 
@@ -864,18 +719,22 @@ window.supabase.createClient(
 );
 
 let editId = null;
-
 let todos = [];
 
-let currentPage = 1;
+// PESQUISA FUNCIONANDO
 
-const pesquisaInput =
-document.getElementById("pesquisa");
+document
+.getElementById("pesquisa")
+.addEventListener("input", renderTabela);
 
-const filtroStatus =
-document.getElementById("filtroStatus");
+document
+.getElementById("filtroStatus")
+.addEventListener("change", renderTabela);
+
+// FUNÇÕES
 
 function norm(v){
+
   return String(v ?? "")
   .toUpperCase()
   .trim();
@@ -900,6 +759,20 @@ function diasRestantes(dataAbertura){
     /
     (1000*60*60*24)
   );
+}
+
+function getStatus(c){
+
+  const dias =
+    diasRestantes(c.data_abertura);
+
+  if(dias < 0)
+    return "ENCERRADO";
+
+  if(dias <= 10)
+    return "ALERTA";
+
+  return "EM_DIA";
 }
 
 function calcularPrazo(data){
@@ -932,37 +805,31 @@ function calcularPrazo(data){
   `;
 }
 
-function getStatus(c){
-
-  const dias =
-    diasRestantes(c.data_abertura);
-
-  if(dias < 0)
-    return "ENCERRADO";
-
-  if(dias <= 10)
-    return "ALERTA";
-
-  return "EM_DIA";
-}
-
 function filtrarLista(lista){
 
-  const q =
-    norm(pesquisaInput.value);
+  const pesquisa =
+    norm(
+      document
+      .getElementById("pesquisa")
+      .value
+    );
 
-  const st =
-    filtroStatus.value;
+  const filtro =
+    document
+    .getElementById("filtroStatus")
+    .value;
 
   return lista.filter(c => {
 
-    if(st !== "TODOS"
-      && getStatus(c) !== st){
-
+    if(
+      filtro !== "TODOS"
+      &&
+      getStatus(c) !== filtro
+    ){
       return false;
     }
 
-    const campos = [
+    const texto = [
 
       c.nome,
       c.propriedade,
@@ -971,20 +838,26 @@ function filtrarLista(lista){
       c.apelido,
       c.observacoes
 
-    ].map(norm).join(" ");
+    ]
 
-    return campos.includes(q);
+    .map(norm)
+    .join(" ");
+
+    return texto.includes(pesquisa);
+
   });
 }
 
 function limparFiltros(){
 
-  pesquisaInput.value = "";
+  pesquisa.value = "";
 
   filtroStatus.value = "TODOS";
 
   renderTabela();
 }
+
+// CARREGAR
 
 async function carregar(){
 
@@ -1002,6 +875,8 @@ async function carregar(){
   renderTabela();
 }
 
+// CHECKBOX
+
 async function atualizarAberto(id, checked){
 
   await supabaseClient
@@ -1017,6 +892,8 @@ async function atualizarAberto(id, checked){
   .eq("id", id);
 }
 
+// RENDER
+
 function renderTabela(){
 
   const listaEl =
@@ -1031,9 +908,6 @@ function renderTabela(){
   contadorFiltrado.textContent =
     filtrados.length;
 
-  contadorExibido.textContent =
-    filtrados.length;
-
   listaEl.innerHTML = "";
 
   filtrados.forEach(c => {
@@ -1042,25 +916,22 @@ function renderTabela(){
 
       <tr>
 
-        <td>${c.nome ?? ""}</td>
+        <td>${c.nome || ""}</td>
 
-        <td>${c.propriedade ?? ""}</td>
+        <td>${c.propriedade || ""}</td>
 
-        <td>${c.endereco ?? ""}</td>
+        <td>${c.endereco || ""}</td>
 
-        <td>${c.telefone ?? ""}</td>
+        <td>${c.telefone || ""}</td>
 
-        <td>${c.data_abertura ?? ""}</td>
+        <td>${c.data_abertura || ""}</td>
 
         <td>
 
           <input
             type="checkbox"
 
-            ${c.aberto_sisdaf
-              ? "checked"
-              : ""
-            }
+            ${c.aberto_sisdaf ? "checked" : ""}
 
             onchange="
               atualizarAberto(
@@ -1072,9 +943,9 @@ function renderTabela(){
 
         </td>
 
-        <td>${c.observacoes ?? ""}</td>
+        <td>${c.observacoes || ""}</td>
 
-        <td>${c.apelido ?? ""}</td>
+        <td>${c.apelido || ""}</td>
 
         <td>
           ${calcularPrazo(c.data_abertura)}
@@ -1085,14 +956,14 @@ function renderTabela(){
           <div class="actions-col">
 
             <button
-              class="action-btn editar"
+              class="editar"
               onclick="editar(${c.id})"
             >
               Editar
             </button>
 
             <button
-              class="action-btn excluir"
+              class="excluir"
               onclick="excluir(${c.id})"
             >
               Excluir
@@ -1107,6 +978,8 @@ function renderTabela(){
     `;
   });
 }
+
+// SALVAR
 
 form.onsubmit = async e => {
 
@@ -1166,6 +1039,8 @@ form.onsubmit = async e => {
   carregar();
 };
 
+// EDITAR
+
 async function editar(id){
 
   const { data } =
@@ -1180,37 +1055,23 @@ async function editar(id){
 
   .single();
 
-  nome.value =
-    data.nome;
-
-  propriedade.value =
-    data.propriedade;
-
-  endereco.value =
-    data.endereco;
-
-  telefone.value =
-    data.telefone;
-
-  obs.value =
-    data.observacoes;
-
-  apelido.value =
-    data.apelido;
-
-  aberto.checked =
-    data.aberto_sisdaf;
+  nome.value = data.nome;
+  propriedade.value = data.propriedade;
+  endereco.value = data.endereco;
+  telefone.value = data.telefone;
+  obs.value = data.observacoes;
+  apelido.value = data.apelido;
+  aberto.checked = data.aberto_sisdaf;
 
   editId = id;
 
   window.scrollTo({
-
     top:0,
-
     behavior:"smooth"
-
   });
 }
+
+// EXCLUIR
 
 async function excluir(id){
 
@@ -1228,9 +1089,7 @@ async function excluir(id){
   }
 }
 
-function paginaAnterior(){}
-
-function proximaPagina(){}
+// EXCEL
 
 function baixarExcel(){
 
@@ -1254,16 +1113,14 @@ function baixarExcel(){
   );
 }
 
+// PDF
+
 function baixarPDF(){
 
   const pdf =
     new jspdf.jsPDF("landscape");
 
-  pdf.text(
-    "Relatório IDAF",
-    14,
-    14
-  );
+  pdf.text("Relatório IDAF",14,14);
 
   const body =
     filtrarLista(todos)
@@ -1300,6 +1157,8 @@ function baixarPDF(){
 
   pdf.save("cadastros_idaf.pdf");
 }
+
+// INICIAR
 
 carregar();
 
