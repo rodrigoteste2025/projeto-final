@@ -49,6 +49,7 @@ body{
 .container{
   max-width:1400px;
   margin:auto;
+  position: relative;
 }
 
 .topbar{
@@ -58,6 +59,7 @@ body{
   border-radius:24px;
   box-shadow:var(--shadow);
   margin-bottom:20px;
+  position: relative;
 }
 
 .topbar-row{
@@ -86,6 +88,7 @@ body{
   padding:12px 16px;
   border-radius:18px;
   box-shadow:var(--shadow);
+  position: relative;
 }
 
 .user-avatar{
@@ -124,6 +127,24 @@ body{
   border-radius:12px;
   cursor:pointer;
   font-weight:bold;
+}
+
+.settings-btn {
+  background: var(--primary2);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-btn:hover {
+  background: var(--primary);
 }
 
 .controls{
@@ -299,6 +320,120 @@ tbody tr:hover{
   color:#991b1b;
 }
 
+/* Ajuste do botão alerta para ficar alinhado */
+#alertButton {
+  position: static;
+  background: var(--warning);
+  border: none;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #92400e;
+  box-shadow: var(--shadow);
+  transition: background-color 0.2s ease;
+  margin-left: auto; /* empurra para a extremidade direita */
+  flex-shrink: 0; /* evitar encolher */
+}
+
+#alertButton:hover {
+  background: #fbbf24;
+  color: #78350f;
+}
+
+/* Alert Pop-up */
+#alertPopup {
+  display:none;
+  position:absolute;
+  top:60px;
+  right:20px;
+  width:320px;
+  background:#fff8e7;
+  border:1px solid var(--warning);
+  border-radius:16px;
+  padding:12px;
+  box-shadow: var(--shadow);
+  z-index: 1002;
+  max-height: 300px;
+  overflow-y:auto;
+}
+
+#alertPopup::-webkit-scrollbar {
+  width: 6px;
+}
+#alertPopup::-webkit-scrollbar-thumb {
+  background-color: var(--warning);
+  border-radius: 3px;
+}
+
+/* Modal styles for Settings */
+#settingsModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+#settingsBox {
+  width: 350px;
+  background: #fff;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+#settingsBox h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+#settingsBox label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 12px;
+}
+
+#settingsBox input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  font-size: 14px;
+  outline: none;
+}
+
+#settingsBox input:focus {
+  border-color: var(--primary);
+}
+
+#settingsBox button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .2s;
+}
+
+#settingsSaveBtn {
+  background: var(--primary);
+  color: #fff;
+}
+
+#settingsCloseBtn {
+  background: var(--danger);
+  color: #fff;
+  margin-top: 8px;
+}
+
+/* LOGIN */
+
 #loginModal{
   position:fixed;
   inset:0;
@@ -430,6 +565,15 @@ footer{
         </div>
 
         <button
+          class="settings-btn"
+          id="settingsButton"
+          title="Configurações"
+          aria-label="Configurações"
+        >
+          ⚙️
+        </button>
+
+        <button
           class="logout-btn"
           onclick="logout()"
         >
@@ -437,6 +581,10 @@ footer{
         </button>
 
       </div>
+
+      <button id="alertButton" title="Cadastros com menos de 10 dias">
+        ⚠️ Alertas!
+      </button>
 
     </div>
 
@@ -483,6 +631,15 @@ footer{
         📄 PDF
       </button>
 
+    </div>
+
+    <!-- Pop-up de alertas -->
+    <div id="alertPopup" style="top: 70px; right: 20px;">
+      <strong>Cadastros com menos de 10 dias:</strong>
+      <ul id="alertList" style="margin-top:8px; padding-left: 18px; font-size: 14px; color: #92400e;"></ul>
+      <button id="closeAlertPopup" style="margin-top:10px; background: var(--warning); border:none; padding:8px 12px; border-radius:12px; cursor:pointer; font-weight:bold; color:#92400e;">
+        Fechar
+      </button>
     </div>
 
   </div>
@@ -604,6 +761,22 @@ footer{
 
 </div>
 
+<!-- Modal de Configurações -->
+<div id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div id="settingsBox">
+    <h3 id="settingsTitle">Configurações</h3>
+
+    <label for="configNome">Nome</label>
+    <input type="text" id="configNome" placeholder="Digite o nome">
+
+    <label for="configSenha">Senha</label>
+    <input type="password" id="configSenha" placeholder="Digite a senha">
+
+    <button id="settingsSaveBtn">Salvar</button>
+    <button id="settingsCloseBtn">Fechar</button>
+  </div>
+</div>
+
 <script>
 
 // LOGIN
@@ -715,7 +888,6 @@ window.supabase.createClient(
 "https://ykqfmgpppvafakcjiicy.supabase.co",
 
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrcWZtZ3BwcHZhZmFrY2ppaWN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTY0OTEsImV4cCI6MjA4MTc3MjQ5MX0.6iU1kae3XJwJw6l-0Cd7bRarImHWhGbDMAVgUDwdmKo"
-
 );
 
 let editId = null;
@@ -731,330 +903,182 @@ document
 .getElementById("filtroStatus")
 .addEventListener("change", renderTabela);
 
-// FUNÇÕES
+// Botão Alerta e pop-up
+const alertButton = document.getElementById("alertButton");
+const alertPopup = document.getElementById("alertPopup");
+const alertList = document.getElementById("alertList");
+const closeAlertPopup = document.getElementById("closeAlertPopup");
+
+// Modal Configurações
+const settingsModal = document.getElementById("settingsModal");
+const settingsButton = document.getElementById("settingsButton");
+const settingsSaveBtn = document.getElementById("settingsSaveBtn");
+const settingsCloseBtn = document.getElementById("settingsCloseBtn");
+const configNome = document.getElementById("configNome");
+const configSenha = document.getElementById("configSenha");
+
+// Função para mostrar ou esconder botão alerta de cadastros com menos de 10 dias e preencher pop-up
+function verificarAlertas(){
+  const alertaCadastros = todos.filter(c => {
+    const dias = diasRestantes(c.data_abertura);
+    return dias <= 10 && dias >= 0;
+  });
+  if(alertaCadastros.length > 0){
+    alertButton.style.display = "block";
+    alertList.innerHTML = "";
+    alertaCadastros.forEach(c => {
+      const dias = diasRestantes(c.data_abertura);
+      const item = document.createElement("li");
+      item.textContent = `${c.nome || '(sem nome)'} - ${c.propriedade || '(sem propriedade)'} — ${dias} dia(s) restante(s)`;
+      alertList.appendChild(item);
+    });
+  } else {
+    alertButton.style.display = "none";
+    alertPopup.style.display = "none";
+  }
+}
+
+// Abrir ou fechar pop-up ao clicar no botão alerta
+alertButton.addEventListener("click", () => {
+  if(alertPopup.style.display === "block") {
+    alertPopup.style.display = "none";
+  } else {
+    alertPopup.style.display = "block";
+  }
+});
+
+// Fechar pop-up ao clicar no botão fechar
+closeAlertPopup.addEventListener("click", () => {
+  alertPopup.style.display = "none";
+});
+
+// Abrir modal de configurações
+settingsButton.addEventListener("click", () => {
+  configNome.value = "";
+  configSenha.value = "";
+  settingsModal.style.display = "flex";
+});
+
+// Fechar modal de configurações
+settingsCloseBtn.addEventListener("click", () => {
+  settingsModal.style.display = "none";
+});
+
+// Salvar configurações com mensagem função em desenvolvimento
+settingsSaveBtn.addEventListener("click", () => {
+  alert("Função ainda em desenvolvimento");
+  settingsModal.style.display = "none";
+});
+
+// Funções auxiliares e principais do sistema continuam inalteradas
 
 function norm(v){
-
-  return String(v ?? "")
-  .toUpperCase()
-  .trim();
+  return String(v ?? "").toUpperCase().trim();
 }
 
 function diasRestantes(dataAbertura){
-
-  const inicio =
-    new Date(dataAbertura);
-
-  const fim =
-    new Date(
-      inicio.getTime()
-      + (60*24*60*60*1000)
-    );
-
-  const agora =
-    new Date();
-
-  return Math.floor(
-    (fim - agora)
-    /
-    (1000*60*60*24)
-  );
+  const inicio = new Date(dataAbertura);
+  const fim = new Date(inicio.getTime() + (60*24*60*60*1000));
+  const agora = new Date();
+  return Math.floor((fim - agora) / (1000*60*60*24));
 }
 
 function getStatus(c){
-
-  const dias =
-    diasRestantes(c.data_abertura);
-
-  if(dias < 0)
-    return "ENCERRADO";
-
-  if(dias <= 10)
-    return "ALERTA";
-
+  const dias = diasRestantes(c.data_abertura);
+  if(dias < 0) return "ENCERRADO";
+  if(dias <= 10) return "ALERTA";
   return "EM_DIA";
 }
 
 function calcularPrazo(data){
-
-  const dias =
-    diasRestantes(data);
-
-  if(dias < 0){
-
-    return `
-      <span class="chip chip-bad">
-        ⛔ ENCERRADO
-      </span>
-    `;
-  }
-
-  if(dias <= 10){
-
-    return `
-      <span class="chip chip-warn">
-        ⚠️ ${dias} dias
-      </span>
-    `;
-  }
-
-  return `
-    <span class="chip chip-ok">
-      ✅ ${dias} dias
-    </span>
-  `;
+  const dias = diasRestantes(data);
+  if(dias < 0) return `<span class="chip chip-bad">⛔ ENCERRADO</span>`;
+  if(dias <= 10) return `<span class="chip chip-warn">⚠️ ${dias} dias</span>`;
+  return `<span class="chip chip-ok">✅ ${dias} dias</span>`;
 }
 
 function filtrarLista(lista){
-
-  const pesquisa =
-    norm(
-      document
-      .getElementById("pesquisa")
-      .value
-    );
-
-  const filtro =
-    document
-    .getElementById("filtroStatus")
-    .value;
-
+  const pesquisa = norm(document.getElementById("pesquisa").value);
+  const filtro = document.getElementById("filtroStatus").value;
   return lista.filter(c => {
-
-    if(
-      filtro !== "TODOS"
-      &&
-      getStatus(c) !== filtro
-    ){
-      return false;
-    }
-
-    const texto = [
-
-      c.nome,
-      c.propriedade,
-      c.endereco,
-      c.telefone,
-      c.apelido,
-      c.observacoes
-
-    ]
-
-    .map(norm)
-    .join(" ");
-
+    if(filtro !== "TODOS" && getStatus(c) !== filtro) return false;
+    const texto = [c.nome, c.propriedade, c.endereco, c.telefone, c.apelido, c.observacoes].map(norm).join(" ");
     return texto.includes(pesquisa);
-
   });
 }
 
 function limparFiltros(){
-
   pesquisa.value = "";
-
   filtroStatus.value = "TODOS";
-
   renderTabela();
 }
-
-// CARREGAR
 
 async function carregar(){
-
-  const { data } =
-    await supabaseClient
-
-    .from("cadastros_idaf")
-
-    .select("*")
-
-    .order("id");
-
+  const { data } = await supabaseClient.from("cadastros_idaf").select("*").order("id");
   todos = data || [];
-
+  verificarAlertas();
   renderTabela();
 }
 
-// CHECKBOX
-
 async function atualizarAberto(id, checked){
-
-  await supabaseClient
-
-  .from("cadastros_idaf")
-
-  .update({
-
-    aberto_sisdaf: !!checked
-
-  })
-
-  .eq("id", id);
+  await supabaseClient.from("cadastros_idaf").update({ aberto_sisdaf: !!checked }).eq("id", id);
 }
 
-// RENDER
-
 function renderTabela(){
-
-  const listaEl =
-    document.getElementById("lista");
-
-  const filtrados =
-    filtrarLista(todos);
-
-  contador.textContent =
-    todos.length;
-
-  contadorFiltrado.textContent =
-    filtrados.length;
-
+  const listaEl = document.getElementById("lista");
+  const filtrados = filtrarLista(todos);
+  contador.textContent = todos.length;
+  contadorFiltrado.textContent = filtrados.length;
   listaEl.innerHTML = "";
-
   filtrados.forEach(c => {
-
     listaEl.innerHTML += `
-
       <tr>
-
         <td>${c.nome || ""}</td>
-
         <td>${c.propriedade || ""}</td>
-
         <td>${c.endereco || ""}</td>
-
         <td>${c.telefone || ""}</td>
-
         <td>${c.data_abertura || ""}</td>
-
         <td>
-
-          <input
-            type="checkbox"
-
-            ${c.aberto_sisdaf ? "checked" : ""}
-
-            onchange="
-              atualizarAberto(
-                ${c.id},
-                this.checked
-              )
-            "
-          >
-
+          <input type="checkbox" ${c.aberto_sisdaf ? "checked" : ""} onchange="atualizarAberto(${c.id}, this.checked)">
         </td>
-
         <td>${c.observacoes || ""}</td>
-
         <td>${c.apelido || ""}</td>
-
+        <td>${calcularPrazo(c.data_abertura)}</td>
         <td>
-          ${calcularPrazo(c.data_abertura)}
-        </td>
-
-        <td>
-
           <div class="actions-col">
-
-            <button
-              class="editar"
-              onclick="editar(${c.id})"
-            >
-              Editar
-            </button>
-
-            <button
-              class="excluir"
-              onclick="excluir(${c.id})"
-            >
-              Excluir
-            </button>
-
+            <button class="editar" onclick="editar(${c.id})">Editar</button>
+            <button class="excluir" onclick="excluir(${c.id})">Excluir</button>
           </div>
-
         </td>
-
       </tr>
-
     `;
   });
 }
 
-// SALVAR
-
 form.onsubmit = async e => {
-
   e.preventDefault();
-
   const dados = {
-
-    propriedade:
-      propriedade.value,
-
-    nome:
-      nome.value,
-
-    endereco:
-      endereco.value,
-
-    telefone:
-      telefone.value,
-
-    data_abertura:
-      data.value,
-
-    observacoes:
-      obs.value,
-
-    apelido:
-      apelido.value,
-
-    aberto_sisdaf:
-      aberto.checked
-
+    propriedade: propriedade.value,
+    nome: nome.value,
+    endereco: endereco.value,
+    telefone: telefone.value,
+    data_abertura: data.value,
+    observacoes: obs.value,
+    apelido: apelido.value,
+    aberto_sisdaf: aberto.checked
   };
-
   if(editId){
-
-    await supabaseClient
-
-    .from("cadastros_idaf")
-
-    .update(dados)
-
-    .eq("id", editId);
-
+    await supabaseClient.from("cadastros_idaf").update(dados).eq("id", editId);
   }else{
-
-    await supabaseClient
-
-    .from("cadastros_idaf")
-
-    .insert([dados]);
+    await supabaseClient.from("cadastros_idaf").insert([dados]);
   }
-
   form.reset();
-
   editId = null;
-
   carregar();
 };
 
-// EDITAR
-
 async function editar(id){
-
-  const { data } =
-
-  await supabaseClient
-
-  .from("cadastros_idaf")
-
-  .select("*")
-
-  .eq("id", id)
-
-  .single();
-
+  const { data } = await supabaseClient.from("cadastros_idaf").select("*").eq("id", id).single();
   nome.value = data.nome;
   propriedade.value = data.propriedade;
   endereco.value = data.endereco;
@@ -1062,83 +1086,38 @@ async function editar(id){
   obs.value = data.observacoes;
   apelido.value = data.apelido;
   aberto.checked = data.aberto_sisdaf;
-
   editId = id;
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
+  window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-// EXCLUIR
-
 async function excluir(id){
-
   if(confirm("Excluir registro?")){
-
-    await supabaseClient
-
-    .from("cadastros_idaf")
-
-    .delete()
-
-    .eq("id", id);
-
+    await supabaseClient.from("cadastros_idaf").delete().eq("id", id);
     carregar();
   }
 }
 
-// EXCEL
-
 function baixarExcel(){
-
-  const wb =
-    XLSX.utils.book_new();
-
-  const ws =
-    XLSX.utils.table_to_sheet(
-      document.querySelector("table")
-    );
-
-  XLSX.utils.book_append_sheet(
-    wb,
-    ws,
-    "IDAF"
-  );
-
-  XLSX.writeFile(
-    wb,
-    "cadastros_idaf.xlsx"
-  );
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.table_to_sheet(document.querySelector("table"));
+  XLSX.utils.book_append_sheet(wb, ws, "IDAF");
+  XLSX.writeFile(wb, "cadastros_idaf.xlsx");
 }
 
-// PDF
-
 function baixarPDF(){
-
-  const pdf =
-    new jspdf.jsPDF("landscape");
-
+  const pdf = new jspdf.jsPDF("landscape");
   pdf.text("Relatório IDAF",14,14);
-
-  const body =
-    filtrarLista(todos)
-    .map(c => [
-
-      c.nome || "",
-      c.propriedade || "",
-      c.endereco || "",
-      c.telefone || "",
-      c.data_abertura || "",
-      c.aberto_sisdaf ? "SIM" : "NÃO",
-      c.observacoes || "",
-      c.apelido || ""
-
-    ]);
-
+  const body = filtrarLista(todos).map(c => [
+    c.nome || "",
+    c.propriedade || "",
+    c.endereco || "",
+    c.telefone || "",
+    c.data_abertura || "",
+    c.aberto_sisdaf ? "SIM" : "NÃO",
+    c.observacoes || "",
+    c.apelido || ""
+  ]);
   pdf.autoTable({
-
     head:[[
       "Produtor",
       "Propriedade",
@@ -1149,16 +1128,11 @@ function baixarPDF(){
       "Obs",
       "Apelido"
     ]],
-
     body,
-
     startY:20
   });
-
   pdf.save("cadastros_idaf.pdf");
 }
-
-// INICIAR
 
 carregar();
 
