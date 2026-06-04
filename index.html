@@ -17,7 +17,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
 <style>
-
 :root{
   --bg:#f4f7fb;
   --card:#ffffff;
@@ -49,7 +48,7 @@ body{
 .container{
   max-width:1400px;
   margin:auto;
-  position: relative;
+  visibility: hidden; /* conteúdo oculto antes do login */
 }
 
 .topbar{
@@ -59,7 +58,6 @@ body{
   border-radius:24px;
   box-shadow:var(--shadow);
   margin-bottom:20px;
-  position: relative;
 }
 
 .topbar-row{
@@ -88,7 +86,6 @@ body{
   padding:12px 16px;
   border-radius:18px;
   box-shadow:var(--shadow);
-  position: relative;
 }
 
 .user-avatar{
@@ -127,24 +124,6 @@ body{
   border-radius:12px;
   cursor:pointer;
   font-weight:bold;
-}
-
-.settings-btn {
-  background: var(--primary2);
-  color: #fff;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.settings-btn:hover {
-  background: var(--primary);
 }
 
 .controls{
@@ -320,124 +299,10 @@ tbody tr:hover{
   color:#991b1b;
 }
 
-/* Ajuste do botão alerta para ficar alinhado */
-#alertButton {
-  position: static;
-  background: var(--warning);
-  border: none;
-  padding: 10px 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-  color: #92400e;
-  box-shadow: var(--shadow);
-  transition: background-color 0.2s ease;
-  margin-left: auto; /* empurra para a extremidade direita */
-  flex-shrink: 0; /* evitar encolher */
-}
-
-#alertButton:hover {
-  background: #fbbf24;
-  color: #78350f;
-}
-
-/* Alert Pop-up */
-#alertPopup {
-  display:none;
-  position:absolute;
-  top:60px;
-  right:20px;
-  width:320px;
-  background:#fff8e7;
-  border:1px solid var(--warning);
-  border-radius:16px;
-  padding:12px;
-  box-shadow: var(--shadow);
-  z-index: 1002;
-  max-height: 300px;
-  overflow-y:auto;
-}
-
-#alertPopup::-webkit-scrollbar {
-  width: 6px;
-}
-#alertPopup::-webkit-scrollbar-thumb {
-  background-color: var(--warning);
-  border-radius: 3px;
-}
-
-/* Modal styles for Settings */
-#settingsModal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1001;
-}
-
-#settingsBox {
-  width: 350px;
-  background: #fff;
-  padding: 30px;
-  border-radius: 24px;
-  box-shadow: var(--shadow);
-}
-
-#settingsBox h3 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-#settingsBox label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 6px;
-  margin-top: 12px;
-}
-
-#settingsBox input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  font-size: 14px;
-  outline: none;
-}
-
-#settingsBox input:focus {
-  border-color: var(--primary);
-}
-
-#settingsBox button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 12px;
-  border-radius: 14px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  transition: .2s;
-}
-
-#settingsSaveBtn {
-  background: var(--primary);
-  color: #fff;
-}
-
-#settingsCloseBtn {
-  background: var(--danger);
-  color: #fff;
-  margin-top: 8px;
-}
-
-/* LOGIN */
-
 #loginModal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.5);
+  background: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -446,7 +311,7 @@ tbody tr:hover{
 
 #loginBox{
   width:350px;
-  background:#fff;
+  background:rgba(255,255,255,0.95);
   padding:30px;
   border-radius:24px;
   box-shadow:var(--shadow);
@@ -476,19 +341,75 @@ footer{
   color:var(--muted);
 }
 
-@media(max-width:768px){
+/* Mensagem sistema (login/logout) */
+.msg-sistema {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 24px;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.8);
+  font-weight: 700;
+  font-size: 16px;
+  z-index: 1100;
+  user-select: none;
+  opacity: 0.95;
+}
 
+/* Avisos container para cadastros pendentes */
+#avisosContainer {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1100;
+  max-width: 600px;
+  width: 90%;
+  font-weight: 600;
+  user-select: none;
+  display: none;
+}
+
+.avisos {
+  background: #fef3c7;
+  border-left: 5px solid var(--warning);
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(250, 204, 21, 0.6);
+  color: #92400e;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#fecharAviso {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  font-weight: 700;
+  color: #92400e;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  margin-left: 16px;
+  user-select: none;
+}
+#fecharAviso:hover {
+  color: #b45309;
+}
+
+@media(max-width:768px){
   .topbar-row{
     flex-direction:column;
     align-items:flex-start;
   }
-
   .controls{
     flex-direction:column;
   }
-
 }
-
 </style>
 </head>
 
@@ -525,6 +446,19 @@ footer{
 
   </div>
 
+</div>
+
+<!-- Mensagem sistema (login/logout) -->
+
+<div id="msgSistema" class="msg-sistema" style="display:none;"></div>
+
+<!-- Mensagem aviso dos cadastros com prazo menor que 10 dias -->
+
+<div id="avisosContainer">
+  <div id="avisosMensagem" class="avisos">
+    <span id="avisosTexto"></span>
+    <button id="fecharAviso" title="Fechar mensagem">×</button>
+  </div>
 </div>
 
 <div class="container">
@@ -565,15 +499,6 @@ footer{
         </div>
 
         <button
-          class="settings-btn"
-          id="settingsButton"
-          title="Configurações"
-          aria-label="Configurações"
-        >
-          ⚙️
-        </button>
-
-        <button
           class="logout-btn"
           onclick="logout()"
         >
@@ -581,10 +506,6 @@ footer{
         </button>
 
       </div>
-
-      <button id="alertButton" title="Cadastros com menos de 10 dias">
-        ⚠️ Alertas!
-      </button>
 
     </div>
 
@@ -631,15 +552,6 @@ footer{
         📄 PDF
       </button>
 
-    </div>
-
-    <!-- Pop-up de alertas -->
-    <div id="alertPopup" style="top: 70px; right: 20px;">
-      <strong>Cadastros com menos de 10 dias:</strong>
-      <ul id="alertList" style="margin-top:8px; padding-left: 18px; font-size: 14px; color: #92400e;"></ul>
-      <button id="closeAlertPopup" style="margin-top:10px; background: var(--warning); border:none; padding:8px 12px; border-radius:12px; cursor:pointer; font-weight:bold; color:#92400e;">
-        Fechar
-      </button>
     </div>
 
   </div>
@@ -756,221 +668,126 @@ footer{
 
   <footer>
     © Todos os direitos reservados 2026
-    Atualizando em 25/05/2026 por Antonio Rodrigo Pires Santiago
+   
   </footer>
 
 </div>
 
-<!-- Modal de Configurações -->
-<div id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-  <div id="settingsBox">
-    <h3 id="settingsTitle">Configurações</h3>
-
-    <label for="configNome">Nome</label>
-    <input type="text" id="configNome" placeholder="Digite o nome">
-
-    <label for="configSenha">Senha</label>
-    <input type="password" id="configSenha" placeholder="Digite a senha">
-
-    <button id="settingsSaveBtn">Salvar</button>
-    <button id="settingsCloseBtn">Fechar</button>
-  </div>
-</div>
-
 <script>
-
-// LOGIN
+// VARIÁVEIS GLOBAIS
 
 const usuarios = {
-
-  RODRIGO:'maria',
-  JANIEL:'1234',
-  CASSIA:'1234',
-  MARCOS:'1234',
-  RAIMUNDA:'1234',
-  ADMIN:'admin',
-  SAMARA:'1234'
-
+  RODRIGO: 'maria',
+  JANIEL: '1234',
+  MARCOS: '1234',
+  CASSIA: '1234',
+  SAMARA: '1234',
+  RAIMUNDA: '1234', 
+  
 };
+
 
 let tempoSessao = 600;
 let timerSessao = null;
+const msgSistema = document.getElementById('msgSistema');
+const avisosContainer = document.getElementById('avisosContainer');
+const avisosTexto = document.getElementById('avisosTexto');
+const fecharAviso = document.getElementById('fecharAviso');
+const container = document.querySelector('.container');
+
+container.style.visibility = 'hidden'; // esconde conteúdo inicialmente
+
+fecharAviso.addEventListener('click', () => {
+  avisosContainer.style.display = 'none';
+});
+
+// FUNÇÕES DE MENSAGENS
+
+function mostrarMensagem(texto) {
+  msgSistema.textContent = texto;
+  msgSistema.style.display = 'block';
+  setTimeout(() => {
+    msgSistema.style.display = 'none';
+  }, 3000);
+}
+
+// LOGIN, LOGOUT e SESSÃO
 
 function login(){
+  const user = loginUser.value.trim().toUpperCase();
+  const pass = loginPass.value.trim();
 
-  const user =
-    loginUser.value.trim().toUpperCase();
-
-  const pass =
-    loginPass.value.trim();
-
-  if(!usuarios[user]
-    || usuarios[user] !== pass){
-
+  if(!usuarios[user] || usuarios[user] !== pass){
     alert("Login inválido");
     return;
   }
 
   usuarioLogado.textContent = user;
-
-  userAvatar.textContent =
-    user.charAt(0);
-
+  userAvatar.textContent = user.charAt(0);
   loginModal.style.display = "none";
+  container.style.visibility = 'visible';
+
+  mostrarMensagem("Você entrou no sistema");
 
   iniciarSessao();
+
+  carregar().then(() => {
+    mostrarAvisoCadastrosPendentes();
+  });
 }
 
 function logout(){
-
   clearInterval(timerSessao);
-
   tempoSessao = 600;
-
   loginPass.value = "";
-
+  loginUser.value = "";
   loginModal.style.display = "flex";
+  container.style.visibility = 'hidden';
+  avisosContainer.style.display = 'none';
+
+  mostrarMensagem("Você saiu do sistema");
 }
 
 function iniciarSessao(){
-
   atualizarTempo();
-
   timerSessao = setInterval(() => {
-
     tempoSessao--;
-
     atualizarTempo();
-
     if(tempoSessao <= 0){
-
       alert("Sessão expirada");
-
       logout();
     }
-
   },1000);
 }
 
 function atualizarTempo(){
-
-  const min =
-    String(Math.floor(tempoSessao/60))
-    .padStart(2,'0');
-
-  const seg =
-    String(tempoSessao%60)
-    .padStart(2,'0');
-
-  contadorSessao.textContent =
-    `${min}:${seg}`;
+  const min = String(Math.floor(tempoSessao/60)).padStart(2,'0');
+  const seg = String(tempoSessao%60).padStart(2,'0');
+  contadorSessao.textContent = `${min}:${seg}`;
 }
 
-// ENTER LOGIN
-
 document.addEventListener("keydown",(e)=>{
-
-  if(
-    e.key === "Enter"
-    &&
-    loginModal.style.display !== "none"
-  ){
+  if(e.key === "Enter" && loginModal.style.display !== "none"){
     login();
   }
-
 });
 
-// SUPABASE
+// CONEXÃO SUPABASE
 
-const supabaseClient =
-window.supabase.createClient(
-
-"https://ykqfmgpppvafakcjiicy.supabase.co",
-
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrcWZtZ3BwcHZhZmFrY2ppaWN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTY0OTEsImV4cCI6MjA4MTc3MjQ5MX0.6iU1kae3XJwJw6l-0Cd7bRarImHWhGbDMAVgUDwdmKo"
+const supabaseClient = window.supabase.createClient(
+  "https://ykqfmgpppvafakcjiicy.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrcWZtZ3BwcHZhZmFrY2ppaWN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTY0OTEsImV4cCI6MjA4MTc3MjQ5MX0.6iU1kae3XJwJw6l-0Cd7bRarImHWhGbDMAVgUDwdmKo"
 );
 
 let editId = null;
 let todos = [];
 
-// PESQUISA FUNCIONANDO
+// PESQUISA E FILTROS
 
-document
-.getElementById("pesquisa")
-.addEventListener("input", renderTabela);
+document.getElementById("pesquisa").addEventListener("input", renderTabela);
+document.getElementById("filtroStatus").addEventListener("change", renderTabela);
 
-document
-.getElementById("filtroStatus")
-.addEventListener("change", renderTabela);
-
-// Botão Alerta e pop-up
-const alertButton = document.getElementById("alertButton");
-const alertPopup = document.getElementById("alertPopup");
-const alertList = document.getElementById("alertList");
-const closeAlertPopup = document.getElementById("closeAlertPopup");
-
-// Modal Configurações
-const settingsModal = document.getElementById("settingsModal");
-const settingsButton = document.getElementById("settingsButton");
-const settingsSaveBtn = document.getElementById("settingsSaveBtn");
-const settingsCloseBtn = document.getElementById("settingsCloseBtn");
-const configNome = document.getElementById("configNome");
-const configSenha = document.getElementById("configSenha");
-
-// Função para mostrar ou esconder botão alerta de cadastros com menos de 10 dias e preencher pop-up
-function verificarAlertas(){
-  const alertaCadastros = todos.filter(c => {
-    const dias = diasRestantes(c.data_abertura);
-    return dias <= 10 && dias >= 0;
-  });
-  if(alertaCadastros.length > 0){
-    alertButton.style.display = "block";
-    alertList.innerHTML = "";
-    alertaCadastros.forEach(c => {
-      const dias = diasRestantes(c.data_abertura);
-      const item = document.createElement("li");
-      item.textContent = `${c.nome || '(sem nome)'} - ${c.propriedade || '(sem propriedade)'} — ${dias} dia(s) restante(s)`;
-      alertList.appendChild(item);
-    });
-  } else {
-    alertButton.style.display = "none";
-    alertPopup.style.display = "none";
-  }
-}
-
-// Abrir ou fechar pop-up ao clicar no botão alerta
-alertButton.addEventListener("click", () => {
-  if(alertPopup.style.display === "block") {
-    alertPopup.style.display = "none";
-  } else {
-    alertPopup.style.display = "block";
-  }
-});
-
-// Fechar pop-up ao clicar no botão fechar
-closeAlertPopup.addEventListener("click", () => {
-  alertPopup.style.display = "none";
-});
-
-// Abrir modal de configurações
-settingsButton.addEventListener("click", () => {
-  configNome.value = "";
-  configSenha.value = "";
-  settingsModal.style.display = "flex";
-});
-
-// Fechar modal de configurações
-settingsCloseBtn.addEventListener("click", () => {
-  settingsModal.style.display = "none";
-});
-
-// Salvar configurações com mensagem função em desenvolvimento
-settingsSaveBtn.addEventListener("click", () => {
-  alert("Função ainda em desenvolvimento");
-  settingsModal.style.display = "none";
-});
-
-// Funções auxiliares e principais do sistema continuam inalteradas
+// FUNÇÕES PARA PRAZO
 
 function norm(v){
   return String(v ?? "").toUpperCase().trim();
@@ -997,6 +814,26 @@ function calcularPrazo(data){
   return `<span class="chip chip-ok">✅ ${dias} dias</span>`;
 }
 
+// AVISO CADASTROS PENDENTES
+
+function mostrarAvisoCadastrosPendentes() {
+  const pendentes = todos.filter(c => {
+    const dias = diasRestantes(c.data_abertura);
+    return dias > 0 && dias <= 10;
+  });
+  if (pendentes.length > 0) {
+    const nomes = pendentes
+      .map(c => `${c.propriedade || "Sem colônia"} - ${c.nome || "Sem produtor"}`)
+      .join(", ");
+    avisosTexto.innerHTML = `Existem ${pendentes.length} cadastro(s) com prazo menor que 10 dias: <strong>${nomes}</strong>.`;
+    avisosContainer.style.display = 'block';
+  } else {
+    avisosContainer.style.display = 'none';
+  }
+}
+
+// FILTRAGEM E TABELA
+
 function filtrarLista(lista){
   const pesquisa = norm(document.getElementById("pesquisa").value);
   const filtro = document.getElementById("filtroStatus").value;
@@ -1008,15 +845,18 @@ function filtrarLista(lista){
 }
 
 function limparFiltros(){
-  pesquisa.value = "";
-  filtroStatus.value = "TODOS";
+  document.getElementById("pesquisa").value = "";
+  document.getElementById("filtroStatus").value = "TODOS";
   renderTabela();
 }
 
 async function carregar(){
-  const { data } = await supabaseClient.from("cadastros_idaf").select("*").order("id");
+  const { data, error } = await supabaseClient.from("cadastros_idaf").select("*").order("id");
+  if(error) {
+    alert("Erro ao carregar dados: " + error.message);
+    return;
+  }
   todos = data || [];
-  verificarAlertas();
   renderTabela();
 }
 
@@ -1055,6 +895,10 @@ function renderTabela(){
   });
 }
 
+// FORMULÁRIO SALVAR
+
+const form = document.getElementById('form');
+
 form.onsubmit = async e => {
   e.preventDefault();
   const dados = {
@@ -1069,7 +913,7 @@ form.onsubmit = async e => {
   };
   if(editId){
     await supabaseClient.from("cadastros_idaf").update(dados).eq("id", editId);
-  }else{
+  } else {
     await supabaseClient.from("cadastros_idaf").insert([dados]);
   }
   form.reset();
@@ -1077,8 +921,14 @@ form.onsubmit = async e => {
   carregar();
 };
 
+// EDITAR REGISTRO
+
 async function editar(id){
-  const { data } = await supabaseClient.from("cadastros_idaf").select("*").eq("id", id).single();
+  const { data, error } = await supabaseClient.from("cadastros_idaf").select("*").eq("id", id).single();
+  if(error) {
+    alert("Erro ao carregar registro para editar: " + error.message);
+    return;
+  }
   nome.value = data.nome;
   propriedade.value = data.propriedade;
   endereco.value = data.endereco;
@@ -1087,15 +937,23 @@ async function editar(id){
   apelido.value = data.apelido;
   aberto.checked = data.aberto_sisdaf;
   editId = id;
-  window.scrollTo({ top:0, behavior:"smooth" });
+  window.scrollTo({top:0, behavior:"smooth"});
 }
+
+// EXCLUIR REGISTRO
 
 async function excluir(id){
   if(confirm("Excluir registro?")){
-    await supabaseClient.from("cadastros_idaf").delete().eq("id", id);
+    const { error } = await supabaseClient.from("cadastros_idaf").delete().eq("id", id);
+    if(error) {
+      alert("Erro ao excluir: " + error.message);
+      return;
+    }
     carregar();
   }
 }
+
+// EXPORTAR EXCEL
 
 function baixarExcel(){
   const wb = XLSX.utils.book_new();
@@ -1104,35 +962,84 @@ function baixarExcel(){
   XLSX.writeFile(wb, "cadastros_idaf.xlsx");
 }
 
-function baixarPDF(){
+// EXPORTAR PDF
+
+function baixarPDF() {
+
   const pdf = new jspdf.jsPDF("landscape");
-  pdf.text("Relatório IDAF",14,14);
-  const body = filtrarLista(todos).map(c => [
-    c.nome || "",
-    c.propriedade || "",
-    c.endereco || "",
-    c.telefone || "",
-    c.data_abertura || "",
-    c.aberto_sisdaf ? "SIM" : "NÃO",
-    c.observacoes || "",
-    c.apelido || ""
-  ]);
-  pdf.autoTable({
-    head:[[
-      "Produtor",
-      "Propriedade",
-      "Endereço",
-      "Telefone",
-      "Data",
-      "SISDAF",
-      "Obs",
-      "Apelido"
-    ]],
-    body,
-    startY:20
+
+  const usuario = document.getElementById("usuarioLogado").textContent;
+  const dataGeracao = new Date().toLocaleString("pt-BR");
+
+  pdf.setFontSize(16);
+  pdf.text("RELATÓRIO DE CADASTROS PARA VISTORIA", 14, 15);
+
+  pdf.setFontSize(10);
+  pdf.text(`Usuário: ${usuario}`, 14, 22);
+  pdf.text(`Gerado em: ${dataGeracao}`, 14, 28);
+
+  const body = filtrarLista(todos).map(c => {
+
+    const dias = diasRestantes(c.data_abertura);
+
+    let prazo = "";
+
+    if (dias < 0) {
+      prazo = "ENCERRADO";
+    } else {
+      prazo = `${dias} DIAS`;
+    }
+
+    let dataFormatada = "";
+
+    if (c.data_abertura) {
+      const partes = c.data_abertura.split("-");
+      dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    return [
+      c.nome || "",
+      c.propriedade || "",
+      c.endereco || "",
+      dataFormatada,
+      c.aberto_sisdaf ? "SIM" : "NÃO",
+      c.observacoes || "",
+      prazo,
+      
+    ];
   });
-  pdf.save("cadastros_idaf.pdf");
+
+  pdf.autoTable({
+    startY: 35,
+
+    styles: {
+      fontSize: 8,
+      cellPadding: 2
+    },
+
+    headStyles: {
+      fillColor: [30, 58, 138],
+      textColor: 255
+    },
+
+    head: [[
+      "PRODUTOR",
+      "COLÔNIA",
+      "ENDEREÇO",
+      "DATA ABERTURA",
+      "ABERTO SISDAF",
+      "OBSERVAÇÃO",
+      "PRAZO",
+      
+    ]],
+
+    body: body
+  });
+
+  pdf.save("relatorio_idaf.pdf");
 }
+
+// INICIALIZAÇÃO
 
 carregar();
 
